@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PureWave Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      background: #f5f6fa;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    /* Sidebar */
+    .admin-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1000;
+    }
+    .admin-sidebar h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      color: #222;
+      margin-bottom: 20px;
+    }
+    .admin-sidebar a {
+      text-decoration: none;
+      color: #222;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    .admin-sidebar a:hover {
+      background: #3a91f5;
+      color: #fff;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      padding: 50px 40px;
+    }
+
+    /* Section Titles */
+    .section-title {
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 30px;
+      border-left: 6px solid #222;
+      padding-left: 16px;
+    }
+
+    /* Dashboard Grid & Cards */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 30px 24px;
+      box-shadow: 0 2px 12px rgba(34,34,34,0.07);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 12px 36px rgba(34,34,34,0.16);
+      transform: translateY(-6px);
+    }
+    .card h3 {
+      margin-top: 0;
+      font-size: 1.35rem;
+      margin-bottom: 16px;
+      color: #2f3542;
+    }
+    .card p {
+      margin: 0;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #222, #3a91f5);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 8px 28px rgba(58, 145, 245, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, #3a91f5, #222);
+      box-shadow: 0 12px 36px rgba(58, 145, 245, 0.6);
+      transform: scale(1.05);
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(34,34,34,0.07);
+      margin-top: 20px;
+    }
+    table th, table td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    table th {
+      background: #f1f2f6;
+      font-weight: 700;
+    }
+    table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    table tr:hover {
+      background: #e6f0ff;
+    }
+
+    /* Section spacing */
+    section {
+      margin-bottom: 70px;
+    }
+
+    /* Responsive */
+    @media(max-width:768px){
+      .main-content { margin-left: 0; padding: 20px; }
+      .admin-sidebar { width: 100%; height: auto; position: relative; flex-direction: row; overflow-x: auto; padding: 10px; }
+      .admin-sidebar h2 { display: none; }
+      .admin-sidebar a { white-space: nowrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <h2>Admin Panel</h2>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#products">Products</a>
+    <a href="#categories">Categories</a>
+    <a href="#orders">Orders</a>
+    <a href="#customers">Customers</a>
+    <a href="#inventory">Inventory</a>
+    <a href="#promotions">Promotions</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#settings">Settings</a>
+    <a href="#analytics">Analytics</a>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Dashboard -->
+    <section id="dashboard">
+      <h2 class="section-title">Dashboard Overview</h2>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Sales Today</h3>
+          <p>$1,250.00</p>
+        </div>
+        <div class="card">
+          <h3>Orders Pending</h3>
+          <p>12 Orders</p>
+        </div>
+        <div class="card">
+          <h3>Best Selling</h3>
+          <p>T-Shirts</p>
+        </div>
+        <div class="card">
+          <h3>New Customers</h3>
+          <p>8 Users</p>
+        </div>
+        <div class="card">
+          <h3>Low Stock Alerts</h3>
+          <p>3 Products</p>
+        </div>
+        <div class="card">
+          <h3>Active Promotions</h3>
+          <p>2 Campaigns</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products">
+      <h2 class="section-title">Product Management</h2>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Add New Product</h3>
+          <a href="#" class="btn">Add Product</a>
+        </div>
+        <div class="card">
+          <h3>Edit Products</h3>
+          <a href="#" class="btn">Edit</a>
+        </div>
+        <div class="card">
+          <h3>Manage Variants</h3>
+          <a href="#" class="btn">Variants</a>
+        </div>
+        <div class="card">
+          <h3>Upload Images</h3>
+          <a href="#" class="btn">Upload</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section id="categories">
+      <h2 class="section-title">Category Management</h2>
+      <!-- Dynamic Table inserted by JS -->
+    </section>
+
+    <!-- Orders -->
+    <section id="orders">
+      <h2 class="section-title">Orders & Fulfillment</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>101</td>
+            <td>John Doe</td>
+            <td>Pending</td>
+            <td>$120</td>
+            <td><a href="#" class="btn">View</a></td>
+          </tr>
+          <tr>
+            <td>102</td>
+            <td>Jane Smith</td>
+            <td>Shipped</td>
+            <td>$250</td>
+            <td><a href="#" class="btn">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Customers -->
+    <section id="customers">
+      <h2 class="section-title">Customer Management</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>VIP</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Yes</td>
+            <td><a href="#" class="btn">View</a></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Jane Smith</td>
+            <td>jane@example.com</td>
+            <td>No</td>
+            <td><a href="#" class="btn">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Inventory -->
+    <section id="inventory">
+      <h2 class="section-title">Inventory</h2>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Stock Levels</h3>
+          <p>Manage product & variant stock</p>
+        </div>
+        <div class="card">
+          <h3>Low Stock Alerts</h3>
+          <p>3 Products</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Promotions -->
+    <section id="promotions">
+      <h2 class="section-title">Promotions & Marketing</h2>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Create Coupon</h3>
+          <a href="#" class="btn">Add Coupon</a>
+        </div>
+        <div class="card">
+          <h3>Manage Banners</h3>
+          <a href="#" class="btn">Banners</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews -->
+    <section id="reviews">
+      <h2 class="section-title">Reviews & Community</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Review ID</th>
+            <th>User</th>
+            <th>Product</th>
+            <th>Rating</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>201</td>
+            <td>John Doe</td>
+            <td>Premium Polo</td>
+            <td>5/5</td>
+            <td><a href="#" class="btn">Approve</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Settings -->
+    <section id="settings">
+      <h2 class="section-title">Settings & Configuration</h2>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Currency & Taxes</h3>
+          <a href="#" class="btn">Edit</a>
+        </div>
+        <div class="card">
+          <h3>Loyalty Program</h3>
+          <a href="#" class="btn">Manage</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics -->
+    <section id="analytics">
+      <h2 class="section-title">Analytics & Insights</h2>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Sales Report</h3>
+          <p>Daily / Weekly / Monthly</p>
+        </div>
+        <div class="card">
+          <h3>Customer Insights</h3>
+          <p>Top VIPs & repeat customers</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Insert Category Table
+    const categoryTable = document.createElement("table");
+    categoryTable.innerHTML = `
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Parent</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="category-body"></tbody>
+    `;
+    document.querySelector("#categories").appendChild(categoryTable);
+
+    async function loadCategories() {
+      try {
+        const res = await fetch("http://localhost:5000/api/categories");
+        const data = await res.json();
+        const tbody = document.getElementById("category-body");
+        tbody.innerHTML = "";
+        data.forEach(cat => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${cat.id}</td>
+              <td>${cat.name}</td>
+              <td>${cat.parent_id || "—"}</td>
+              <td>${cat.status}</td>
+              <td>
+                <button onclick="editCategory(${cat.id})" class="btn">Edit</button>
+                <button onclick="deleteCategory(${cat.id})" class="btn">Delete</button>
+                <button onclick="pauseCategory(${cat.id}, '${cat.status}')" class="btn">
+                  ${cat.status === "active" ? "Pause" : "Activate"}
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Error loading categories:", err);
+      }
+    }
+
+    async function deleteCategory(id) {
+      await fetch(`http://localhost:5000/api/categories/${id}`, { method: "DELETE" });
+      loadCategories();
+    }
+
+    async function pauseCategory(id, status) {
+      const newStatus = status === "active" ? "paused" : "active";
+      await fetch(`http://localhost:5000/api/categories/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus })
+      });
+      loadCategories();
+    }
+
+    function editCategory(id) {
+      alert("Open a modal to edit category " + id);
+    }
+
+    loadCategories();
+  </script>
+
+</body>
+</html>
