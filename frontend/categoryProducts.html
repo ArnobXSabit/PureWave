@@ -164,14 +164,13 @@ async function loadProducts() {
         ? product.images[0] 
         : 'http://localhost:3000/Products/default.jpg';
 
-
-      card.innerHTML = `
-        <a href="viewProduct.html?img=${product.product_id}" style="display:block;">
-          <img src="${imageUrl}" alt="${product.name}" />
-        </a>
-        <h3>${product.name}</h3>
-        <span>৳ ${product.price}</span>
-      `;
+    card.innerHTML = `
+      <a href="viewProduct.html?id=${product.product_id}" style="display:block;">
+        <img src="${imageUrl}" alt="${product.name}" />
+      </a>
+      <h3>${product.name}</h3>
+      <span>৳ ${product.price}</span>
+    `;
 
       productGrid.appendChild(card);
       displayIndex++;

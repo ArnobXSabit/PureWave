@@ -128,12 +128,12 @@ async function loadAllProducts() {
       }
 
       card.innerHTML = `
-        <a href="viewProduct.html?img=${product.product_id}" style="display:block;">
-          <img src="${imageUrl}" alt="${product.name}" />
-        </a>
-        <h3>${product.name}</h3>
-        <span>৳ ${product.price}</span>
-      `;
+      <a href="viewProduct.html?id=${product.product_id}" style="display:block;">
+        <img src="${imageUrl}" alt="${product.name}" />
+      </a>
+      <h3>${product.name}</h3>
+      <span>৳ ${product.price}</span>
+    `;
 
       grid.appendChild(card);
       index++;
