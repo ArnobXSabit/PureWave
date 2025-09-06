@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PureWave - Category Products</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
 <style>
 /* ---------- Product card styles ---------- */
 .product-card {
@@ -55,13 +56,8 @@
 .logo { font-size:1.8rem; font-weight:bold; color:#222; text-decoration:none; }
 .nav-links { display:flex; gap:24px; }
 .nav-links a { text-decoration:none; color:#222; font-weight:600; transition:color 0.3s ease; }
-.nav-links a:hover { color:#ff4500; }
+.nav-links a:hover { color:#000000; }
 
-/* ---------- Sidebar ---------- */
-#sidebar { position:fixed; top:0; left:-280px; width:280px; height:100%; background:#f1f2f6; box-shadow:3px 0 12px rgba(0,0,0,0.1); padding:20px; transition:left 0.3s ease; z-index:1200; }
-#sidebar ul { list-style:none; padding:0; }
-#sidebar ul li { margin:16px 0; }
-#sidebar ul li a { text-decoration:none; color:#222; font-weight:600; }
 </style>
 </head>
 <body>
@@ -88,28 +84,7 @@
   </div>
 </section>
 
-<aside id="sidebar">
-  <h2>Menu</h2>
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="allProducts.html">Shop</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="cart.html">Cart</a></li>
-  </ul>
-</aside>
-
-<div id="product-grid" class="product-grid"></div>
-
 <script>
-// ---------- Sidebar toggle ----------
-const sidebarToggle = document.getElementById('sidebarToggle');
-const sidebar = document.getElementById('sidebar');
-sidebarToggle.addEventListener('click', () => {
-  sidebar.style.left = sidebar.style.left === '0px' ? '-280px' : '0px';
-});
-document.addEventListener('click', e => {
-  if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) sidebar.style.left = '-280px';
-});
 
 // ---------- User auth links ----------
 const authLinks = document.getElementById("authLinks");
@@ -194,7 +169,7 @@ async function loadProducts() {
 document.addEventListener("DOMContentLoaded", loadProducts);
 </script>
 
-
+  <script src="sidebar.js"></script>
 
 </body>
 </html>

@@ -5,21 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Product - PureWave</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="sidebar.css">
 <style>
 /* ---------- Navbar ---------- */
 .navbar { width: 100%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top:0; z-index:1000; }
 .nav-container { max-width:1200px; margin:auto; padding:20px; display:flex; justify-content:space-between; align-items:center; }
 .logo { font-size:1.8rem; font-weight:bold; color:#222; text-decoration:none; transition: color 0.3s; }
-.logo:hover { color:#ff4500; }
+.logo:hover { color:#f07041; }
 .nav-links { display:flex; gap:24px; }
 .nav-links a { text-decoration:none; color:#222; font-weight:600; transition:color 0.3s ease; }
-.nav-links a:hover { color:#ff4500; }
-
-/* ---------- Sidebar ---------- */
-#sidebar { position:fixed; top:0; left:-280px; width:280px; height:100%; background:#f1f2f6; box-shadow:3px 0 12px rgba(0,0,0,0.1); padding:20px; transition:left 0.3s ease; z-index:1200; }
-#sidebar ul { list-style:none; padding:0; }
-#sidebar ul li { margin:16px 0; }
-#sidebar ul li a { text-decoration:none; color:#222; font-weight:600; }
+.nav-links a:hover { color:#000000; }
 
 /* ---------- Product Detail ---------- */
 .container { max-width:1200px; margin:40px auto; padding:0 20px; }
@@ -43,32 +38,9 @@
 
 /* ---------- Size Buttons ---------- */
 .size-options { display:flex; gap:12px; margin-bottom:20px; }
-
-.size-btn { 
-  padding:10px 20px; 
-  border:2px solid #8e8686; 
-  border-radius:40px; 
-  background:#fff; 
-  color:#000; 
-  font-weight:700; 
-  cursor:pointer; 
-  transition: all 0.3s ease, transform 0.3s ease;
-}
-
-.size-btn:hover { 
-  background: linear-gradient(135deg,#3a91f5,#222); 
-  color: #fff; 
-  transform: translateY(-6px) scale(1.05); 
-  box-shadow:0 12px 32px rgba(58,145,245,0.6); 
-  border: none; 
-}
-
-.size-btn.active { 
-  background: linear-gradient(135deg,#222,#3a91f5); 
-  color: #fff; 
-  border: none; 
-  box-shadow:0 8px 24px rgba(58,145,245,0.4);
-}
+.size-btn { padding:10px 20px; border:2px solid #8e8686; border-radius:40px; background:#fff; color:#000; font-weight:700; cursor:pointer; transition: all 0.3s ease, transform 0.3s ease; }
+.size-btn:hover { background: linear-gradient(135deg,#3a91f5,#222); color: #fff; transform: translateY(-6px) scale(1.05); box-shadow:0 12px 32px rgba(58,145,245,0.6); border: none; }
+.size-btn.active { background: linear-gradient(135deg,#222,#3a91f5); color: #fff; border: none; box-shadow:0 8px 24px rgba(58,145,245,0.4); }
 
 /* ---------- Select Size Label ---------- */
 .size-label { font-weight:600; margin-bottom:8px; display:block; }
@@ -84,16 +56,15 @@
 
 @media(max-width:768px){.product-detail{flex-direction:column;}.product-images,.product-info{flex:1 1 100%;}}
 
-.thumbnail.active {
-  border: 2px solid #000;
-  box-shadow: 0 0 8px rgba(0,0,0,0.3);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
+.thumbnail.active { border: 2px solid #000; box-shadow: 0 0 8px rgba(0,0,0,0.3); border-radius: 8px; transition: all 0.3s ease; }
+
+/* ---------- Sidebar z-index ---------- */
+#sidebar { z-index: 2000; }
 </style>
 </head>
 <body>
 
+<!-- Navbar -->
 <header class="navbar">
   <div class="nav-container">
     <div style="display:flex; align-items:center; gap:16px;">
@@ -104,11 +75,7 @@
   </div>
 </header>
 
-<aside id="sidebar">
-  <h2>Menu</h2>
-  <ul id="sidebarMenu"></ul>
-</aside>
-
+<!-- Main content -->
 <main class="container">
   <nav class="breadcrumbs" id="breadcrumbs"></nav>
 
@@ -135,77 +102,48 @@
   </section>
 </main>
 
+<!-- Scripts -->
 <script>
-// Sidebar toggle
-const sidebarToggle = document.getElementById("sidebarToggle");
-const sidebar = document.getElementById("sidebar");
-sidebarToggle.addEventListener("click", () => {
-  sidebar.style.left = sidebar.style.left === "0px" ? "-280px" : "0px";
-});
-document.addEventListener("click", e => {
-  if(!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) sidebar.style.left='-280px';
-});
-
-// Navbar & sidebar
+// ---------- Navbar & Sidebar ----------
 function checkLogin() {
   const user = JSON.parse(localStorage.getItem("user"));
   const navLinks = document.getElementById("navLinks");
-  const sidebarMenu = document.getElementById("sidebarMenu");
   const defaultProfile = "pp.jpg";
 
-  if(user){
+  navLinks.innerHTML = `
+    <a href="index.html">Home</a>
+    <a href="allProducts.html">Shop</a>
+    <a href="cart.html">Cart</a>
+  `;
+
+  if(user && user.name){
     const profileImg = user.image ? user.image : defaultProfile;
     const firstName = user.name.split(" ")[0];
-
-    navLinks.innerHTML = `
-      <a href="index.html">Home</a>
-      <a href="shopNow.html">Shop</a>
-      <a href="cart.html">Cart</a>
+    navLinks.innerHTML += `
       <a href="userprofile.html" style="text-decoration:none;color:#222;font-weight:600;">
         <img src="${profileImg}" alt="Profile" style="width:32px;height:32px;border-radius:50%;vertical-align:middle;margin-right:6px;">
         ${firstName}
       </a>
     `;
-
-    sidebarMenu.innerHTML = `
-      <li><a href="index.html">Home</a></li>
-      <li><a href="shopNow.html">Shop</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="userprofile.html">Profile</a></li>
-      <li><a href="#" id="logoutLinkSidebar">Logout</a></li>
-    `;
-    document.getElementById("logoutLinkSidebar").addEventListener("click", logoutUser);
   } else {
-    navLinks.innerHTML = `
-      <a href="index.html">Home</a>
-      <a href="shopNow.html">Shop</a>
-      <a href="cart.html">Cart</a>
-      <a href="login.html" style="text-decoration:none;color:#222;font-weight:600;">Login</a>
-    `;
-    sidebarMenu.innerHTML = `
-      <li><a href="index.html">Home</a></li>
-      <li><a href="shopNow.html">Shop</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="login.html">Login</a></li>
-    `;
+    navLinks.innerHTML += `<a href="login.html">Login</a>`;
   }
-}
-
-function logoutUser() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("user");
-  checkLogin();
-  window.location.reload();
 }
 
 checkLogin();
 
-// Get product ID from URL
+// Sidebar toggle
+const sidebar = document.getElementById("sidebar");
+document.getElementById("sidebarToggle").addEventListener("click", () => {
+  sidebar.classList.toggle("active");
+});
+</script>
+
+<script>
+// ---------- Product Loading ----------
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get("id");
 
-// Load product data
 async function loadProduct() {
   try {
     const res = await fetch(`http://localhost:3000/api/products`);
@@ -231,6 +169,7 @@ async function loadProduct() {
     document.getElementById("product-price").innerText = `৳ ${product.price}`;
     document.getElementById("product-description").innerText = product.description;
 
+    // Images
     const imageContainer = document.getElementById("image-container");
     imageContainer.innerHTML = "";
     const mainImage = document.createElement("img");
@@ -259,7 +198,7 @@ async function loadProduct() {
       });
     }
 
-    // Size buttons
+    // Sizes
     const sizes = ["M","L","XL","XXL"];
     const sizeContainer = document.getElementById("size-options");
     sizeContainer.innerHTML = "";
@@ -280,6 +219,7 @@ async function loadProduct() {
     document.querySelector(".product-detail").innerHTML = "<p style='font-size:1.2rem;color:#f00;'>Failed to load product details.</p>";
   }
 }
+
 document.addEventListener("DOMContentLoaded", loadProduct);
 
 // Quantity buttons
@@ -292,10 +232,8 @@ document.getElementById("add-to-cart").addEventListener("click", async ()=>{
   const selectedSizeBtn = document.querySelector(".size-btn.active");
   if(!selectedSizeBtn){ alert("Please select a size!"); return; }
 
-  const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("accessToken");
-
-  if(!user || !token){ 
+  if(!token){ 
     alert("Please login first."); 
     window.location.href="login.html"; 
     return; 
@@ -312,7 +250,6 @@ document.getElementById("add-to-cart").addEventListener("click", async ()=>{
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ 
-        user_id: user.user_id,
         product_id: productId,
         quantity: quantity,
         size: size
@@ -332,5 +269,6 @@ document.getElementById("add-to-cart").addEventListener("click", async ()=>{
 });
 </script>
 
+<script src="sidebar.js"></script>
 </body>
 </html>

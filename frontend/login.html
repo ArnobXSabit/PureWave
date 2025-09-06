@@ -92,6 +92,32 @@
 
     .footer { background: #222; color: #fff; padding: 40px 0; text-align: center; margin-top: auto; }
     .footer a { color: #fff; text-decoration: none; margin: 0 10px; cursor: pointer; }
+    .toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  min-width: 250px;
+  background: #3a91f5;  /* default color */
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.5s ease;
+  z-index: 2000;
+}
+.toast.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.toast.success { background: #28a745; } /* green */
+.toast.error { background: #dc3545; }   /* red */
+.toast.warning { background: #ffc107; } /* yellow */
+
   </style>
 </head>
 <body>
@@ -131,6 +157,10 @@
     </div>
   </div>
 
+    <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+
   <footer class="footer">
     <p>&copy; 2025 PureWave. All rights reserved.</p>
     <div>
@@ -141,40 +171,40 @@
   <script>
     const loginMessage = document.getElementById("loginMessage");
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-      try {
-        const res = await fetch("http://localhost:3000/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-          // Store tokens and user info
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("refreshToken", data.refreshToken);
-          localStorage.setItem("user", JSON.stringify(data.user));
-
-          // Show last login if available
-          loginMessage.textContent = data.lastLogin
-            ? `✅ Login successful! Last login: ${new Date(data.lastLogin).toLocaleString()}. Redirecting...`
-            : "✅ Login successful! Redirecting...";
-
-          setTimeout(() => { window.location.href = "index.html"; }, 1500);
-        } else {
-          loginMessage.textContent = "❌ Login failed: " + (data.message || "Check credentials.");
-        }
-      } catch (err) {
-        console.error(err);
-        loginMessage.textContent = "⚠️ Something went wrong. Please try again later.";
-      }
+  try {
+    const res = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
     });
+
+    const data = await res.json();
+
+    if (data.success) {
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      let msg = data.lastLogin
+        ? `Login successful! Last login: ${new Date(data.lastLogin).toLocaleString()}. Redirecting...`
+        : "Login successful! Redirecting...";
+      showToast(msg, "success");
+
+      setTimeout(() => { window.location.href = "index.html"; }, 1500);
+    } else {
+      showToast(data.message || "Login failed: Check credentials.", "error");
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("Something went wrong. Please try again later.", "warning");
+  }
+});
+
 
     // Admin secret login (3-click logo)
     let logoClickCount = 0;
@@ -189,6 +219,13 @@
     document.getElementById("palestineLink").addEventListener("click", () => {
       window.location.href = "loginAdmin.html";
     });
+    function showToast(message, type = "success", duration = 3000) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast show " + type; // add type for color
+    setTimeout(() => { toast.className = "toast"; }, duration);
+  }
+
   </script>
 
 </body>
