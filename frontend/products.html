@@ -284,24 +284,28 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 </a>
 
 <script>
-  const BACKEND_URL = "https://purewave.onrender.com"; // same origin, relative path
-</script>
 
-<script>
-const BACKEND_URL = "https://purewave.onrender.com";
-
-// ---------- Navbar Dropdown Search Toggle ----------
+  // ---------- Navbar Dropdown Search Toggle ----------
 const navbarSearchIcon = document.getElementById('navbarSearchIcon');
 const navbarSearchDropdown = document.getElementById('navbarSearchDropdown');
 
 navbarSearchIcon.addEventListener('click', (e) => {
-  e.stopPropagation();
-  navbarSearchDropdown.style.display = navbarSearchDropdown.style.display === 'block' ? 'none' : 'block';
-  if(navbarSearchDropdown.style.display === 'block') document.getElementById('navbarDropdownInput').focus();
+  e.stopPropagation(); // prevent document click from closing it immediately
+  // toggle dropdown visibility
+  if(navbarSearchDropdown.style.display === 'block') {
+    navbarSearchDropdown.style.display = 'none';
+  } else {
+    navbarSearchDropdown.style.display = 'block';
+    // optionally focus the input
+    document.getElementById('navbarDropdownInput').focus();
+  }
 });
 
+// Close dropdown if clicked outside
 document.addEventListener('click', (e) => {
-  if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon) navbarSearchDropdown.style.display = 'none';
+  if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon) {
+    navbarSearchDropdown.style.display = 'none';
+  }
 });
 
 // ---------- Duplicate Navbar Hide on Scroll ----------
@@ -324,7 +328,9 @@ async function initSidebar() {
   sidebarToggle2.addEventListener('click', () => sidebar.classList.toggle('open'));
 
   document.addEventListener('click', e => {
-    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebarToggle2.contains(e.target)) sidebar.classList.remove('open');
+    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebarToggle2.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
   });
 
   const selectedCategories = new Set();
@@ -333,7 +339,7 @@ async function initSidebar() {
 
   async function loadSidebarCategories() {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/categories`);
+      const res = await fetch("http://localhost:3000/api/categories");
       const categories = await res.json();
       const container = document.getElementById("sidebarCategories");
       container.innerHTML = "";
@@ -391,7 +397,7 @@ async function initSidebar() {
     const grid = document.getElementById("product-grid");
     grid.innerHTML = "";
 
-    const resCategories = await fetch(`${BACKEND_URL}/api/categories`);
+    const resCategories = await fetch("http://localhost:3000/api/categories");
     const categories = await resCategories.json();
     const categoryMap = {};
     categories.forEach(cat => {
@@ -424,7 +430,7 @@ async function initSidebar() {
     let displayIndex = 0;
 
     for(const catId of categoryIdsToFetch){
-        const res = await fetch(`${BACKEND_URL}/api/products?category_id=${catId}`);
+        const res = await fetch(`http://localhost:3000/api/products?category_id=${catId}`);
         const data = await res.json();
         if(!data.success) continue;
 
@@ -438,7 +444,7 @@ async function initSidebar() {
             else if(displayIndex % 3 === 1) card.classList.add("from-bottom");
             else card.classList.add("from-right");
 
-            const imgUrl = p.images?.[0] ?? `${BACKEND_URL}/Products/default.jpg`;
+            const imgUrl = p.images?.[0] ?? 'http://localhost:3000/Products/default.jpg';
             card.innerHTML = `<a href="viewProduct.html?id=${p.product_id}"><img src="${imgUrl}" alt="${p.name}" /></a><h3>${p.name}</h3><span>৳ ${p.price}</span>`;
             grid.appendChild(card);
             displayIndex++;
@@ -471,7 +477,7 @@ function updateCartCount() {
 let allCategories = [];
 async function loadAllCategories() {
   try { 
-    const res = await fetch(`${BACKEND_URL}/api/categories`); 
+    const res = await fetch("http://localhost:3000/api/categories"); 
     allCategories = await res.json(); 
   } catch(e) { console.error(e); }
 }
@@ -494,7 +500,7 @@ function setupAutocomplete(input, redirectTo) {
       const item = document.createElement('div');
       item.textContent = cat.category_name;
       item.addEventListener('click', () => {
-        window.location.href = `products.html?category=${cat.category_id}`;
+        window.location.href = redirectTo===1 ? `products.html?category=${cat.category_id}` : `products.html?category=${cat.category_id}`;
       });
       list.appendChild(item);
     });
@@ -512,7 +518,12 @@ function setupAutocomplete(input, redirectTo) {
     else if(e.key==="Enter"){ e.preventDefault(); if(currentFocus>-1) list[currentFocus].click(); }
   });
 
-  function addActive(list){ if(!list) return; removeActive(list); if(currentFocus>=list.length) currentFocus=0; if(currentFocus<0) currentFocus=list.length-1; list[currentFocus].classList.add("autocomplete-active"); }
+  function addActive(list){ 
+    if(!list) return; removeActive(list); 
+    if(currentFocus>=list.length) currentFocus=0; 
+    if(currentFocus<0) currentFocus=list.length-1; 
+    list[currentFocus].classList.add("autocomplete-active"); 
+  }
   function removeActive(list){ for(let i=0;i<list.length;i++) list[i].classList.remove("autocomplete-active"); }
   function closeAllLists(){ const lists=document.querySelectorAll('.autocomplete-items'); lists.forEach(l=>l.parentNode.removeChild(l)); currentFocus=-1; }
 
@@ -533,8 +544,8 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   setupAutocomplete(document.getElementById('searchInput'), 1);
   setupAutocomplete(document.getElementById('navbarDropdownInput'), 2);
 });
-</script>
 
+</script>
 
 </body>
 </html>
