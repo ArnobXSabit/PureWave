@@ -1,5 +1,7 @@
 const pool = require("../config/db");
 
+const BACKEND_URL = "https://purewave.onrender.com"; // ✅ deployed backend URL
+
 // Get products (optionally filtered by category)
 exports.getAllProducts = async (req, res) => {
   const categoryId = req.query.category_id; // optional
@@ -44,7 +46,7 @@ exports.getAllProducts = async (req, res) => {
       // Map images to product_id
       imagesRows.forEach(img => {
         if (!imagesMap[img.product_id]) imagesMap[img.product_id] = [];
-        imagesMap[img.product_id].push(`http://localhost:3000/${img.image_url}`); // ✅ full URL
+        imagesMap[img.product_id].push(`${BACKEND_URL}/${img.image_url}`); // ✅ updated full URL
       });
     }
 
