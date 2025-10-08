@@ -478,7 +478,7 @@ window.addEventListener('resize', adjustSidebar);
 // ------------------ Categories ------------------
 async function loadCategories(){
   try{
-    const res = await fetch("https://purewave-backend.onrender.com/api/categories");
+    const res = await fetch(`${BACKEND_URL}/api/categories`);
     const categories = await res.json();
     const container = document.getElementById("categoriesGrid");
     container.innerHTML = "";
@@ -525,7 +525,7 @@ async function loadCategories(){
 // Sidebar categories
 async function loadSidebarCategories(){
   try{
-    const res=await fetch("https://purewave-backend.onrender.com/api/categories");
+    const res = await fetch(`${BACKEND_URL}/api/categories`);
     const categories=await res.json();
     const container=document.getElementById("sidebarCategories");
     const map={};
@@ -601,7 +601,7 @@ window.addEventListener('scroll', () => {
 let allCategories = [];
 async function loadAllCategories() {
   try {
-    const res = await fetch("https://purewave-backend.onrender.com/api/categories");
+const res = await fetch(`${BACKEND_URL}/api/categories`);
     allCategories = await res.json();
   } catch (err) { console.error(err); }
 }
@@ -732,42 +732,44 @@ loadAllCategories();
 document.addEventListener("DOMContentLoaded", () => {
   const floatingBg = document.getElementById("floatingBackground");
   const iconCount = 200; // total number of icons
-  const iconSize = 60; // icon width & height in px
-  const placedPositions = [];
+  const iconSize = 60; // width & height of each icon in px
+  const gap = 10; // minimum gap between icons
 
-  function isOverlapping(x, y) {
-    for (const pos of placedPositions) {
-      const dx = pos.x - x;
-      const dy = pos.y - y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < iconSize + 10) return true; // 10px minimum gap
+  // Calculate number of columns and rows
+  const cols = Math.floor(floatingBg.offsetWidth / (iconSize + gap));
+  const rows = Math.floor(floatingBg.offsetHeight / (iconSize + gap));
+
+  // Create all possible grid positions
+  const positions = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      positions.push({
+        x: c * (iconSize + gap),
+        y: r * (iconSize + gap)
+      });
     }
-    return false;
   }
 
-  for (let i = 0; i < iconCount; i++) {
+  // Shuffle positions randomly
+  positions.sort(() => 0.5 - Math.random());
+
+  // Place icons in shuffled positions
+  for (let i = 0; i < Math.min(iconCount, positions.length); i++) {
+    const pos = positions[i];
     const icon = document.createElement("img");
-    icon.src = "w-icon.svg"; 
+    icon.src = "w-icon.svg"; // your icon
     icon.classList.add("floating-icon");
+    icon.style.left = pos.x + "px";
+    icon.style.top = pos.y + "px";
 
-    let tries = 0;
-    let x, y;
-    do {
-      x = Math.floor(Math.random() * (floatingBg.offsetWidth - iconSize));
-      y = Math.floor(Math.random() * (floatingBg.offsetHeight - iconSize));
-      tries++;
-    } while (isOverlapping(x, y) && tries < 100);
-
-    icon.style.left = x + "px";
-    icon.style.top = y + "px";
+    // Random animation duration & delay for floating effect
     icon.style.animationDuration = (10 + Math.random() * 10) + "s";
+    icon.style.animationDelay = Math.random() * 10 + "s";
 
-    placedPositions.push({ x, y });
     floatingBg.appendChild(icon);
   }
 });
 </script>
-
 
 
 </body>
