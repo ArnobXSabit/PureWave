@@ -1,1 +1,9 @@
-backend/node_modules/
+# Ignore node modules everywhere
+node_modules/
+
+# Ignore environment variables
+.env
+
+# Optional: other temporary or system files
+npm-debug.log
+.DS_Store
