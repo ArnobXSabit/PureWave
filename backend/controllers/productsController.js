@@ -1,7 +1,5 @@
 const pool = require("../config/db");
 
-const BACKEND_URL = "https://purewave.onrender.com"; // ✅ deployed backend URL
-
 // Get products (optionally filtered by category)
 exports.getAllProducts = async (req, res) => {
   const categoryId = req.query.category_id; // optional
@@ -38,15 +36,17 @@ exports.getAllProducts = async (req, res) => {
     let imagesMap = {};
 
     if (productIds.length) {
-      const [imagesRows] = await pool.query(
-        `SELECT product_id, image_url FROM images WHERE product_id IN (?)`,
-        [productIds]
+      // Create placeholders for each product ID
+      const placeholders = productIds.map(() => '?').join(',');
+      const [imagesRows] = await pool.execute(
+        `SELECT product_id, image_url FROM images WHERE product_id IN (${placeholders})`,
+        productIds
       );
 
       // Map images to product_id
       imagesRows.forEach(img => {
         if (!imagesMap[img.product_id]) imagesMap[img.product_id] = [];
-        imagesMap[img.product_id].push(`${BACKEND_URL}/${img.image_url}`); // ✅ updated full URL
+        imagesMap[img.product_id].push(`https://purewave.onrender.com/${img.image_url}`);
       });
     }
 
@@ -59,7 +59,7 @@ exports.getAllProducts = async (req, res) => {
       category_id: p.category_id,
       category_name: p.category_name,
       parent_name: p.parent_name,
-      images: imagesMap[p.product_id] || [] // array of image URLs
+      images: imagesMap[p.product_id] || []
     }));
 
     res.json({
