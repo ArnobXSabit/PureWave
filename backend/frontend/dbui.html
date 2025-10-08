@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PureWaveDB Management - SuperAdmin</title>
+<style>
+html, body { height: 100%; margin: 0; padding: 0; font-family: 'Inter','Segoe UI',Arial,sans-serif; background:#f5f6fa; color:#222; line-height:1.6; }
+
+/* Sidebar */
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1000;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #f1f2f6;
+}
+.admin-sidebar h2 { margin-top:0; font-size:1.8rem; margin-bottom:20px; }
+.admin-sidebar a { text-decoration:none; color:#222; padding:12px 16px; border-radius:12px; font-weight:600; transition:0.3s; }
+.admin-sidebar a:hover { background: linear-gradient(135deg,#222,#3a91f5); color:#fff; transform:scale(1.05); }
+
+/* Main content */
+.main-content { margin-left:280px; height:100vh; display:flex; flex-direction:column; padding:20px 30px; box-sizing:border-box; }
+.section-title { font-size:2rem; font-weight:900; margin-bottom:20px; border-left:6px solid #222; padding-left:16px; flex-shrink:0; }
+.top-actions { margin-bottom:10px; flex-shrink:0; }
+
+/* Table */
+.table-wrapper { flex:1 1 auto; overflow:auto; border-radius:12px; box-shadow:0 2px 12px rgba(34,34,34,0.07); }
+table { width:100%; border-collapse:collapse; background:#fff; min-width:800px; }
+table th, table td { padding:16px 20px; text-align:left; border-bottom:1px solid #eee; vertical-align: middle; }
+table th { background:#f1f2f6; font-weight:700; position: sticky; top:0; z-index:10; }
+table tr:nth-child(even){ background:#f8f9fa; }
+table tr:hover { background:#e6f0ff; }
+
+/* Buttons */
+.btn { display:inline-block; background: linear-gradient(135deg,#222,#3a91f5); color:#fff; padding:10px 20px; border-radius:30px; font-size:0.9rem; font-weight:600; border:none; cursor:pointer; margin:5px; transition:0.3s; }
+.btn:hover { background: linear-gradient(135deg,#3a91f5,#222); transform:scale(1.05); }
+
+/* Modal */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:2000; }
+.modal-content { background:#fff; padding:20px; border-radius:12px; width:90%; max-width:600px; max-height:90%; overflow-y:auto; }
+.modal-content h3 { margin-top:0; }
+.modal-content label { display:block; margin-top:10px; font-weight:600; }
+.modal-content input, .modal-content select, .modal-content textarea { width:100%; padding:8px; margin-top:4px; border-radius:6px; border:1px solid #ccc; }
+
+/* Images */
+.thumb { width:50px; height:50px; object-fit:cover; border-radius:6px; cursor:pointer; margin-right:5px; }
+.image-container { display:flex; gap:5px; flex-wrap:wrap; }
+
+/* Scrollbar */
+.table-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
+.table-wrapper::-webkit-scrollbar-thumb { background-color: #bbb; border-radius: 6px; }
+.table-wrapper::-webkit-scrollbar-track { background: #f1f2f6; border-radius: 6px; }
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  min-width: 280px;
+  background: #3a91f5;
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.5s ease;
+  z-index: 2000;
+  text-align: center;
+}
+.toast.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+
+/* Delete confirmation box */
+.confirm-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+  text-align: center;
+  z-index: 3000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 300px;
+  cursor: pointer;
+}
+.confirm-box.show { transform: translate(-50%, -50%) scale(1); }
+.confirm-box.show:hover { transform: translate(-50%, -52%) scale(1.02); box-shadow: 0 24px 60px rgba(0,0,0,0.35); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.confirm-box h3 { margin-bottom: 24px; font-size: 1.2rem; font-weight: 700; color: #222; }
+.confirm-box button {
+  padding: 12px 32px;
+  margin: 0 8px;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.confirm-yes { background: linear-gradient(135deg, #222, #3a91f5); color: #fff; }
+.confirm-yes:hover { background: linear-gradient(135deg, #3a91f5, #222); transform: scale(1.05); }
+.confirm-cancel { background: #eee; color: #222; }
+.confirm-cancel:hover { background: #ddd; transform: scale(1.05); }
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  gap: 10px;
+  color: #222;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.logo:hover .logo-text { color: rgb(246, 161, 4); -webkit-text-fill-color: unset; }
+</style>
+</head>
+<body>
+
+<aside class="admin-sidebar" id="sidebar">
+  <h2 class="logo" onclick="refreshPage()">
+    <span class="logo-text">PureWaveDB</span>
+  </h2>
+  <div class="sidebar-links"></div>
+</aside>
+
+<div class="main-content">
+  <h2 class="section-title" id="tableTitle">Select a table</h2>
+  <div class="top-actions" id="tableActions"></div>
+  <div class="table-wrapper">
+    <table id="dataTable">
+      <thead id="tableHead"></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal" id="recordModal">
+  <div class="modal-content">
+    <h3 id="modalTitle">Add Record</h3>
+    <form id="recordForm">
+      <div id="formFields"></div>
+      <div style="margin-top:15px; display:flex; gap:10px;">
+        <button type="submit" class="btn" id="modalSubmit">Save</button>
+        <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="deleteConfirmBox" class="confirm-box">
+  <h3>Are you sure you want to delete this record?</h3>
+  <button class="confirm-yes" id="deleteYes">Yes</button>
+  <button class="confirm-cancel" id="deleteCancel">Cancel</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const API_URL = 'http://localhost:3000/api/db';
+const autoColumns = ['created_at','updated_at','added_at','last_login','login_count','current_stock','earned_at','redeemed_at','order_date','payment_date','activity_time','processed_at','requested_at','force_reset'];
+
+let tableColumns = {};
+let currentTable = '';
+let editId = null;
+let deleteId = null;
+
+const toast = document.getElementById("toast");
+function showToast(message, duration=2000){
+  toast.textContent = message;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"), duration);
+}
+
+// ================= Sidebar =================
+async function loadSidebar(){
+  try{
+    const res = await fetch(`${API_URL}/schema/tables`);
+    const data = await res.json();
+    if(!data.success) throw new Error('Failed to fetch tables');
+    const sidebar = document.getElementById('sidebar');
+    data.tables.forEach(tbl=>{
+      const a=document.createElement('a');
+      a.href="#";
+      a.textContent=tbl.charAt(0).toUpperCase()+tbl.slice(1).replace(/_/g,' ');
+      a.onclick=()=>loadTable(tbl);
+      sidebar.appendChild(a);
+    });
+  }catch(err){ console.error(err); showToast('Error loading sidebar'); }
+}
+
+// ================= Table Columns =================
+async function loadTable(tableName){
+  currentTable = tableName;
+  document.getElementById('tableTitle').innerText = tableName.charAt(0).toUpperCase()+tableName.slice(1);
+  try{
+    const res = await fetch(`${API_URL}/schema/columns/${tableName}`);
+    const data = await res.json();
+    if(!data.success) throw new Error('Failed to fetch columns');
+
+    let cols = data.columns.map(c=>c.Field);
+    const reorderedCols = cols.filter(c=>!['created_at','updated_at'].includes(c));
+
+    if(currentTable==='products'){
+      const idx = reorderedCols.indexOf('feature');
+      if(idx!==-1) reorderedCols.splice(idx,1);
+    }
+
+    ['created_at','updated_at'].forEach(c=>{ if(cols.includes(c)) reorderedCols.push(c); });
+    tableColumns[tableName] = reorderedCols;
+  }catch(err){ console.error(err); showToast('Error fetching columns'); return; }
+
+  buildTableHeader();
+  fetchData();
+}
+
+function buildTableHeader(){
+  const cols = tableColumns[currentTable];
+  const actionsDiv = document.getElementById('tableActions');
+  let displayCols = [...cols];
+
+  if(currentTable==='categories'){
+    const idx = displayCols.indexOf('category_id');
+    if(idx!==-1) displayCols.splice(idx,0,'grandparent_name','parent_name');
+  }
+
+  const thead = document.getElementById('tableHead');
+  if(currentTable==='images'){
+    thead.innerHTML='<tr><th>Image</th>'+displayCols.map(c=>`<th>${c}</th>`).join('')+'<th>Actions</th></tr>';
+  }else if(currentTable==='products'){
+    thead.innerHTML='<tr><th>Product Images</th>'+displayCols.map(c=>`<th>${c}</th>`).join('')+'<th>Actions</th></tr>';
+  }else{
+    thead.innerHTML='<tr>'+displayCols.map(c=>`<th>${c}</th>`).join('')+'<th>Actions</th></tr>';
+  }
+
+  actionsDiv.innerHTML=`<button class="btn" onclick="openModal('add')">Add New Record</button>
+                        <button class="btn" onclick="fetchData()">Refresh</button>`;
+}
+
+// ================= Fetch Data =================
+async function fetchData(){
+  try{
+    const res = await fetch(`${API_URL}/${currentTable}`);
+    const data = await res.json();
+    const cols = tableColumns[currentTable];
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML='';
+
+    let imagesData=[];
+    if(currentTable==='products'){
+      const imgRes = await fetch(`${API_URL}/images`);
+      imagesData = await imgRes.json();
+    }
+
+    if(currentTable==='categories'){
+      const idMap={};
+      data.forEach(c=>idMap[c.category_id]=c);
+      data.forEach(row=>{
+        if(!row.parent_id){ row.parent_name='-'; row.grandparent_name='-'; }
+        else{
+          const parent=idMap[row.parent_id];
+          row.parent_name=parent? parent.category_name:'-';
+          row.grandparent_name=parent&&parent.parent_id?idMap[parent.parent_id]?.category_name || '-':'-';
+        }
+      });
+      data.forEach(row=>{
+        if(!row.parent_id) row.level='grand';
+        else if(idMap[row.parent_id] && !idMap[row.parent_id].parent_id) row.level='parent';
+        else row.level='sub';
+      });
+    }
+
+    data.forEach(row=>{
+      let tr='<tr>';
+      if(currentTable==='images'){
+        tr+=`<td><a href="${row['image_url']}" target="_blank"><img src="${row['image_url']}" class="thumb"></a></td>`;
+      }else if(currentTable==='products'){
+        const prodImages = imagesData.filter(img=>img.product_id===row.product_id);
+        let imgHtml='<div class="image-container">';
+        prodImages.forEach(img=>{ imgHtml+=`<a href="${img.image_url}" target="_blank"><img src="${img.image_url}" class="thumb"></a>`; });
+        imgHtml+='</div>';
+        tr+=`<td>${prodImages.length>0?imgHtml:'-'}</td>`;
+      }
+
+      const displayCols = currentTable==='categories'?['grandparent_name','parent_name',...cols]:cols;
+      displayCols.forEach(c=> tr+=`<td>${row[c]??'-'}</td>`);
+      tr+=`<td>
+        <button class="btn" onclick="openModal('edit',${row[cols[0]]})">Edit</button>
+        <button class="btn" onclick="deleteRecordPrompt(${row[cols[0]]})">Delete</button>
+      </td></tr>`;
+      tbody.innerHTML+=tr;
+    });
+
+  }catch(err){ console.error(err); showToast('Error fetching data');}
+}
+
+// ================= Modal =================
+async function openModal(mode, id = null) {
+  const modal = document.getElementById('recordModal');
+  const formFields = document.getElementById('formFields');
+  const modalTitle = document.getElementById('modalTitle');
+  editId = id;
+  formFields.innerHTML = '';
+
+  const cols = tableColumns[currentTable];
+  modalTitle.innerText = mode === 'add' ? `Add Record to ${currentTable}` : `Edit Record ${id}`;
+
+  let recordData = {};
+  if (mode === 'edit') {
+    const res = await fetch(`${API_URL}/${currentTable}`);
+    const data = await res.json();
+    recordData = data.find(r => r[cols[0]] == id) || {}; // ✅ Fix here
+  }
+
+  for (const col of cols) {
+    if (col.endsWith('_id') && mode === 'add') continue;
+    if (autoColumns.includes(col)) continue;
+
+    if (col === 'parent_id' && currentTable === 'categories') {
+      const res = await fetch(`${API_URL}/categories`);
+      const categories = await res.json();
+      const categoryOptions = categories.filter(c => c.category_id !== editId);
+      const options = [{ category_id: null, category_name: '-- None (Grandparent) --' }, ...categoryOptions];
+      const selectHTML = options.map(opt => `<option value="${opt.category_id ?? ''}" ${recordData[col] == opt.category_id ? 'selected' : ''}>${opt.category_name}</option>`).join('');
+      formFields.innerHTML += `<label>Parent Category</label><select name="${col}">${selectHTML}</select>`;
+    }
+    else if (col === 'role' && (currentTable === 'admin' || currentTable === 'users')) {
+      const roles = ['SuperAdmin','Marketing','Inventory','Sales'];
+      const options = roles.map(r => `<option value="${r}" ${recordData[col] === r ? 'selected' : ''}>${r}</option>`).join('');
+      formFields.innerHTML += `<label>${col}</label><select name="${col}">${options}</select>`;
+    }
+    else if (col === 'password_hash') {
+      formFields.innerHTML += `<label>Password</label>
+        <input type="password" name="password_hash" placeholder="${mode==='edit'?'Leave blank to keep current password':''}">
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" placeholder="${mode==='edit'?'Leave blank to keep current password':''}">`;
+    }
+    else {
+      formFields.innerHTML += `<label>${col}</label><input type="text" name="${col}" value="${recordData[col] ?? ''}">`; // ✅ previous data shown
+    }
+  }
+
+  modal.style.display = 'flex';
+}
+
+
+function closeModal(){
+  document.getElementById('recordModal').style.display='none';
+  document.getElementById('recordForm').reset();
+  document.getElementById('formFields').innerHTML='';
+  editId=null;
+}
+
+// ================= Form Submit =================
+document.getElementById('recordForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const form=e.target;
+  const formData={};
+  for(let [key,value] of new FormData(form).entries()){
+  if(key==='password_hash' && value==='' && editId) continue;
+
+  // Convert empty string to null for numeric fields like parent_id
+  if(key === 'parent_id' && value === '') {
+    formData[key] = null;
+  } else {
+    formData[key] = value;
+  }
+}
+
+  if(formData['password_hash'] && formData['password_hash']!==formData['confirm_password']){
+    showToast('Password and Confirm Password do not match!');
+    return;
+  }
+  delete formData['confirm_password'];
+
+  if(currentTable==='admin'||currentTable==='users'){
+    if(!editId) formData['force_reset']=1;
+  }
+
+  try{
+    let res;
+    if(editId){
+      res=await fetch(`${API_URL}/${currentTable}/${editId}`,{
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(formData)
+      });
+    }else{
+      res=await fetch(`${API_URL}/${currentTable}`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(formData)
+      });
+    }
+    const result=await res.json();
+    showToast(result.message || 'Success');
+    closeModal();
+    fetchData();
+  }catch(err){ console.error(err); showToast('Error saving record'); }
+});
+
+// ================= Delete Confirmation =================
+function deleteRecordPrompt(id){
+  deleteId=id;
+  document.getElementById('deleteConfirmBox').classList.add('show');
+}
+
+document.getElementById('deleteYes').addEventListener('click', async ()=>{
+  if(!deleteId) return;
+  document.getElementById('deleteConfirmBox').classList.remove('show');
+  try{
+    const res=await fetch(`${API_URL}/${currentTable}/${deleteId}`,{method:'DELETE'});
+    const result=await res.json();
+    showToast(result.message || 'Deleted');
+    fetchData();
+    deleteId=null;
+  }catch(err){ console.error(err); showToast('Error deleting record'); }
+});
+
+document.getElementById('deleteCancel').addEventListener('click', ()=>{
+  document.getElementById('deleteConfirmBox').classList.remove('show');
+  deleteId=null;
+});
+
+// ================= Initialize =================
+loadSidebar();
+function refreshPage(){ location.reload(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PureWave</title>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+/* ---------- Global Styles ---------- */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', Arial, sans-serif; }
+body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top:100px; }
+
+/* ---------- Navbar ---------- */
+.navbar { width:100%; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:fixed; top:0; z-index:1000; }
+.nav-container { max-width:1200px; margin:auto; padding:20px; display:flex; justify-content:space-between; align-items:center; }
+.logo { font-size:1.8rem; font-weight:bold; color:#222; text-decoration:none; }
+.nav-links { display:flex; gap:20px; align-items:center; }
+.nav-links a { color:#222; font-size:1.4rem; transition: color 0.3s; }
+.nav-links a:hover { color:#3a91f5; }
+
+/* ---------- Sidebar ---------- */
+#sidebar {
+  position: fixed;
+  top: 100px; /* will be adjusted dynamically via JS */
+  left: -400px;
+  width: 400px;
+  height: calc(100% - 100px);
+  background: #fafafa;
+  color: #1a1a1a;
+  font-family: 'Helvetica Neue', 'Segoe UI', 'Roboto', sans-serif;
+  overflow-y: auto;
+  box-shadow: 3px 0 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  transition: left 0.3s ease;
+  z-index: 1200;
+}
+#sidebar.open { left: 0; }
+#sidebar::-webkit-scrollbar { width: 8px; }
+#sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 4px; }
+#sidebar h2 { margin-top: 0; margin-bottom: 12px; font-size: 1.3rem; font-weight: 700; }
+#sidebar ul { list-style: none; padding-left: 0; margin: 0; }
+#sidebar ul li { margin: 6px 0; }
+#sidebar ul li .flex-row { display: flex; justify-content: space-between; align-items: center; }
+#sidebar ul li a { text-decoration: none; color: #222; font-weight: 600; transition: color 0.2s ease; }
+#sidebar ul li a:hover { color: #3a91f5; }
+#sidebar ul li span.toggle { cursor: pointer; font-weight: 900; font-size: 1.5rem; color: #000; margin-left: 8px; user-select: none; }
+
+/* Category levels */
+#sidebar ul li a.grand { font-weight: 700; font-size: 1.1rem; }
+#sidebar ul li a.parent { font-weight: 600; font-size: 1rem; }
+#sidebar ul li a.child { font-weight: 500; font-size: 0.95rem; }
+
+/* ---------- Category Cards ---------- */
+.category-grid { display:flex; flex-wrap:wrap; gap:28px; margin-top:40px; justify-content:center; }
+.category-card { flex:1 1 calc(33.333% - 28px); max-width:360px; border-radius:12px; overflow:hidden; cursor:pointer; transform:scale(0.95) translateY(30px); opacity:0; transition: all 0.8s ease, box-shadow 0.3s ease; position:relative; }
+.category-card img { width:100%; height:200px; object-fit:cover; transition: transform 0.4s ease, filter 0.4s ease; border-radius:12px; display:block; filter:brightness(1); }
+.category-card h3, .category-card span { position:absolute; left:20px; z-index:2; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,0.7); transition:all 0.3s ease; }
+.category-card h3 { bottom:40px; font-size:1.6rem; font-weight:800; }
+.category-card span { bottom:15px; font-size:1rem; font-weight:600; }
+.category-card:hover { transform:scale(1) translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,0.18); z-index:2; }
+.category-card:hover img { transform:scale(1.05); filter:brightness(1.1); }
+
+/* Scroll animation */
+.from-left { transform: translateX(-40px) scale(0.95); }
+.from-right { transform: translateX(40px) scale(0.95); }
+.from-bottom { transform: translateY(40px) scale(0.95); }
+.show { opacity:1; transform:scale(1) translate(0,0); transition: transform 0.8s cubic-bezier(0.4,0,0.2,1), opacity 0.8s ease; }
+
+/* Responsive */
+@media(max-width:900px){ .category-card{ flex:1 1 calc(47% - 28px); max-width:400px; } }
+@media(max-width:600px){ .category-card{ flex:1 1 100%; max-width:100%; } }
+
+/* ---------- Buttons ---------- */
+.btn { display:inline-block; background:linear-gradient(135deg,#222,#3a91f5); color:#fff; padding:16px 48px; border-radius:40px; font-size:1.1rem; font-weight:600; text-decoration:none; box-shadow:0 8px 28px rgba(58,145,245,0.4); transition:transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; cursor:pointer; width:fit-content; }
+.btn:hover, .btn:focus { background:linear-gradient(135deg,#3a91f5,#222); box-shadow:0 12px 36px rgba(58,145,245,0.6); transform:scale(1.05); outline:none; }
+
+/* ---------- Hero Section ---------- */
+.hero { text-align:center; position:relative; background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%); padding:140px 0 80px; }
+.hero-content { max-width:600px; margin:0 auto; color:#222; background:#fff; border-radius:22px; box-shadow:0 8px 32px rgba(34,34,34,0.1); border:1.5px solid #e3e6ee; padding:38px 32px 36px; }
+.hero-content h2 { font-size:2.8rem; font-weight:700; margin-bottom:10px; letter-spacing:1px; }
+.hero-content div { width:60px; height:4px; background:#222; border-radius:2px; margin:0 auto 18px; }
+.hero-content p { font-size:1.25rem; margin-bottom:32px; color:#444; }
+.hero svg { position:absolute; bottom:-1px; left:0; width:100%; height:60px; }
+
+/* ---------- Footer ---------- */
+footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-size:0.9rem; }
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="nav-container">
+    <!-- Left: Hamburger + Logo -->
+    <div style="display:flex; align-items:center; gap:16px;">
+      <button id="sidebarToggle" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
+      <a href="index.html" class="logo">PureWave</a>
+    </div>
+
+    <!-- Right: Nav Icons -->
+    <nav class="nav-links">
+      <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
+      <a href="allProducts.html" title="Shop"><i class="fas fa-store"></i></a>
+      <a href="cart.html" title="Cart"><i class="fas fa-shopping-cart"></i></a>
+      <a href="userprofile.html" title="Profile"><i class="fas fa-user"></i></a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h2>Premium Clothing</h2>
+    <div></div>
+    <p>Shop the latest designs in comfort and style.</p>
+    <a href="allProducts.html" class="btn">Shop Now</a>
+  </div>
+  <svg viewBox="0 0 1440 60" fill="none">
+    <path fill="#fff" d="M0,0 C480,60 960,0 1440,60 L1440,60 L0,60 Z"></path>
+  </svg>
+</section>
+
+<!-- Featured Categories -->
+<section class="products">
+  <div class="container" style="max-width:1200px;margin:auto;padding:40px 20px;">
+    <h2 style="font-size:2.2rem;font-weight:900;color:#181818;margin-bottom:48px;border-left:none ;text-align: center;padding-left:0px;">Featured Categories</h2>
+    <div id="categoriesGrid" class="category-grid"></div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2025 PureWave. All rights reserved.
+</footer>
+
+<aside id="sidebar">
+  <h2>Categories</h2>
+  <ul id="sidebarCategories"></ul>
+</aside>
+
+<script>
+// Sidebar toggle
+const sidebarToggle = document.getElementById('sidebarToggle');
+const sidebar = document.getElementById('sidebar');
+sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+document.addEventListener('click', e => {
+  if(!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) sidebar.classList.remove('open');
+});
+
+// Sidebar dynamic positioning under navbar
+const navbar = document.querySelector('.navbar');
+function adjustSidebar() {
+  const navHeight = navbar.offsetHeight;
+  sidebar.style.top = navHeight + 'px';
+  sidebar.style.height = `calc(100% - ${navHeight}px)`;
+}
+window.addEventListener('load', adjustSidebar);
+window.addEventListener('resize', adjustSidebar);
+
+// Load categories with scroll animation
+async function loadCategories(){
+  try{
+    const res = await fetch("http://localhost:3000/api/categories");
+    const categories = await res.json();
+    const container = document.getElementById("categoriesGrid");
+
+    const categoriesWithImages = categories
+      .filter(cat=>cat.thumbnail && cat.thumbnail.url)
+      .sort((a,b)=> (a.thumbnail_order ?? a.category_id) - (b.thumbnail_order ?? b.category_id));
+
+    container.innerHTML = "";
+    categoriesWithImages.forEach((cat,index)=>{
+      const card = document.createElement("div");
+      card.classList.add("category-card");
+      if(index % 3 === 0) card.classList.add("from-left");
+      else if(index % 3 === 1) card.classList.add("from-bottom");
+      else card.classList.add("from-right");
+
+      card.innerHTML = `
+        <a href="categoryProducts.html?category=${cat.category_id}" style="text-decoration:none;color:inherit;">
+          <img src="${cat.thumbnail.url}" alt="${cat.category_name}" />
+          <h3>${cat.category_name}</h3>
+          ${cat.parent_name ? `<span>${cat.parent_name}</span>` : ""}
+        </a>
+      `;
+      container.appendChild(card);
+    });
+
+    const observer = new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting) entry.target.classList.add("show");
+        else entry.target.classList.remove("show");
+      });
+    }, {threshold:0.15});
+    document.querySelectorAll(".category-card").forEach(card=>observer.observe(card));
+  } catch(err){ console.error("Error loading categories:", err);}
+}
+
+// Load sidebar categories
+async function loadSidebarCategories(){
+  try{
+    const res = await fetch("http://localhost:3000/api/categories");
+    const categories = await res.json();
+    const container = document.getElementById("sidebarCategories");
+    const map = {};
+    categories.forEach(cat=>{
+      const parentId = cat.parent_id ?? 0;
+      if(!map[parentId]) map[parentId] = [];
+      map[parentId].push(cat);
+    });
+    function createList(parentId, depth=0){
+      if(!map[parentId]) return null;
+      const ul = document.createElement('ul'); ul.style.paddingLeft = depth===0?'0':'14px'; ul.style.margin='6px 0';
+      map[parentId].forEach(cat=>{
+        const li=document.createElement('li');
+        const hasChildren = map[cat.category_id] && map[cat.category_id].length>0;
+        const flexRow = document.createElement('div'); flexRow.classList.add('flex-row');
+        const a=document.createElement('a'); a.textContent = cat.category_name;
+        if(!hasChildren) a.href=`categoryProducts.html?category=${cat.category_id}`; else a.href="#";
+        if(depth===0) a.classList.add('grand'); else if(depth===1) a.classList.add('parent'); else a.classList.add('child');
+        flexRow.appendChild(a);
+
+        const childrenUl = createList(cat.category_id, depth+1);
+        if(childrenUl){
+          childrenUl.style.display='none';
+          const toggle = document.createElement('span'); toggle.textContent='+'; toggle.classList.add('toggle');
+          function toggleChildren(e){ e.stopPropagation(); childrenUl.style.display = childrenUl.style.display==='block'?'none':'block'; toggle.textContent = childrenUl.style.display==='block'?'−':'+'; }
+          toggle.addEventListener('click', toggleChildren);
+          a.addEventListener('click', e=>{ if(hasChildren){ e.preventDefault(); toggleChildren(e); } });
+          flexRow.appendChild(toggle);
+          li.appendChild(flexRow); li.appendChild(childrenUl);
+        } else { li.appendChild(flexRow); }
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+    const topUl = createList(0);
+    if(topUl) container.appendChild(topUl);
+  } catch(err){ console.error(err); }
+}
+
+// Initialize
+document.addEventListener("DOMContentLoaded", ()=>{
+  loadCategories();
+  loadSidebarCategories();
+});
+</script>
+
+</body>
+</html>

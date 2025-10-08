@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PureWave</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="favicon.png">
+<style>
+/* ---------- Global Styles ---------- */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', Arial, sans-serif; }
+body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top:100px; }
+
+/* Navbar */
+.navbar, .duplicate-navbar { width:100%; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:fixed; top:0; z-index:1000; }
+.nav-container { display:flex; justify-content:space-between; align-items:center; gap:16px; width:100%; padding:20px; }
+.nav-left { display:flex; align-items:center; gap:16px; }
+.nav-left .brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
+.nav-left .brand-icon { height:25px; }
+.nav-left .logo { font-size:1.8rem; font-weight:bold; color:#222; font-family:'Raleway', sans-serif; }
+.nav-center { flex:1; display:flex; justify-content:center; align-items:center; position:relative; }
+.nav-center input[type="text"] { width:100%; max-width:300px; padding:8px 12px; border:1px solid #ccc; border-radius:24px 0 0 24px; outline:none; }
+.nav-center button { padding:8px 16px; border:none; background:#000; color:#fff; border-radius:0 24px 24px 0; cursor:pointer; transition: background 0.3s; }
+.nav-center button:hover { background:#333; }
+.nav-links { display:flex; gap:50px; align-items:center; }
+.nav-links a { color:#222; font-size:1.4rem; transition: color 0.3s; position:relative; }
+.nav-links a:hover { color:#3a91f5; }
+.duplicate-navbar { z-index:1100; transition: transform 0.3s ease, opacity 0.3s ease; }
+.duplicate-navbar.hidden { transform: translateY(-100%); opacity:0; }
+
+/* Footer */
+footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-size:0.9rem; }
+
+/* Cart Bubble */
+.nav-cart-count { position:absolute; top:-8px; right:-8px; background:#3a91f5; color:#fff; font-size:0.75rem; font-weight:bold; width:18px; height:18px; border-radius:50%; display:flex; justify-content:center; align-items:center; }
+
+/* Floating Cart */
+#floatingCart { position:fixed; bottom:30px; right:30px; width:50px; height:50px; background:#3a91f5; color:#fff; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:1.5rem; z-index:1200; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+#floatingCart span { position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff0000; color:#fff; font-size:0.75rem; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; }
+
+/* Autocomplete */
+#autocomplete-list { position:absolute; background:#fff; border:1px solid #ccc; max-height:200px; overflow-y:auto; width:100%; top:38px; left:0; z-index:9999; border-radius:0 0 8px 8px; }
+#autocomplete-list div { padding:8px 12px; cursor:pointer; }
+.autocomplete-active { background:#3a91f5; color:#fff; }
+
+/* Sidebar Styles */
+#sidebar { position:fixed; top:0; left:-300px; width:300px; height:100%; background:#f7f7f7; overflow-y:auto; transition:0.3s; z-index:1500; padding:20px; box-shadow:2px 0 8px rgba(0,0,0,0.2); }
+#sidebar.open { left:0; }
+#sidebar h2 { margin-bottom:10px; }
+#sidebar ul { list-style:none; padding-left:0; }
+#sidebar ul li { margin:6px 0; }
+#sidebar a { text-decoration:none; color:#222; cursor:pointer; }
+#sidebar a.grand { font-weight:bold; }
+#sidebar .toggle { cursor:pointer; margin-left:8px; }
+.flex-row { display:flex; align-items:center; justify-content:space-between; }
+
+/* ---------- Cart Table ---------- */
+.container { max-width:1200px; margin:40px auto; padding:0 20px; }
+.cart-table-wrapper { overflow-x:auto; max-width:100%; } /* Scrollable wrapper */
+.cart-table { width:100%; border-collapse:collapse; margin-bottom:24px; }
+.cart-table th, .cart-table td { padding:12px; text-align:left; border-bottom:1px solid #ddd; white-space:nowrap; } /* Prevent wrapping */
+.cart-table th { background:#f8f8f8; }
+.cart-image { width:80px; height:80px; object-fit:cover; border-radius:8px; }
+
+/* ---------- Quantity Buttons ---------- */
+.qty-btn { padding:4px 10px; margin:0 4px; cursor:pointer; border:1px solid #ccc; background:#fff; border-radius:6px; }
+.remove-btn { padding:6px 12px; cursor:pointer; border:none; border-radius:6px; background:#f44336; color:#fff; transition:all 0.3s ease; }
+.remove-btn:hover { background:#d32f2f; }
+
+/* ---------- Total ---------- */
+.cart-total { font-size:1.3rem; font-weight:700; text-align:right; margin-top:16px; }
+.checkout-btn { display:inline-block; background:linear-gradient(135deg,#222,#3a91f5); color:#fff; padding:12px 24px; border:none; border-radius:40px; cursor:pointer; font-weight:700; text-decoration:none; transition:all 0.3s ease; }
+.checkout-btn:hover { background:linear-gradient(135deg,#3a91f5,#222); transform:scale(1.05); }
+
+/* ---------- Empty Cart ---------- */
+.empty-cart { text-align:center; font-size:1.2rem; margin-top:40px; color:#555; }
+</style>
+</head>
+<body>
+
+<!-- Duplicate Navbar -->
+<header class="navbar duplicate-navbar" id="duplicateNavbar">
+  <div class="nav-container">
+    <div class="nav-left">
+      <button id="sidebarToggle2" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">
+        <i class="fas fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand">
+        <img src="icon.png" alt="Brand Icon" class="brand-icon">
+        <span class="logo">PureWave</span>
+      </a>
+    </div>
+    <div class="nav-center">
+      <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
+        <input type="text" id="searchInput" placeholder="Search products...">
+        <button type="submit"><i class="fas fa-search"></i></button>
+      </form>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html"><i class="fas fa-home"></i></a>
+      <a href="allProducts.html"><i class="fas fa-store"></i></a>
+      <a href="cart.html"><i class="fas fa-shopping-cart"></i><span class="nav-cart-count" id="duplicateNavbarCartCount">0</span></a>
+      <a href="userprofile.html"><i class="fas fa-user"></i></a>
+    </nav>
+  </div>
+</header>
+
+<!-- Original Navbar -->
+<header class="navbar" id="navbar">
+  <div class="nav-container">
+    <div class="nav-left">
+      <button id="sidebarToggle" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">
+        <i class="fas fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand">
+        <img src="icon.png" alt="Brand Icon" class="brand-icon">
+        <span class="logo">PureWave</span>
+      </a>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html"><i class="fas fa-home"></i></a>
+      <a href="javascript:void(0);" id="navbarSearchIcon"><i class="fas fa-search"></i></a>
+      <a href="allProducts.html"><i class="fas fa-store"></i></a>
+      <a href="cart.html"><i class="fas fa-shopping-cart"></i><span class="nav-cart-count" id="navbarCartCount">0</span></a>
+      <a href="userprofile.html"><i class="fas fa-user"></i></a>
+    </nav>
+  </div>
+</header>
+
+<aside id="sidebar">
+  <h2>Categories</h2>
+  <ul id="sidebarCategories"></ul>
+</aside>
+
+<main class="container">
+  <h1>Shopping Cart</h1>
+  <div id="cart-container"></div>
+</main>
+
+<footer>
+  &copy; 2025 PureWave. All rights reserved.
+</footer>
+
+<a href="cart.html" id="floatingCart">
+  <i class="fas fa-shopping-cart"></i>
+  <span id="cartCount">0</span>
+</a>
+
+<script>
+// ---------- Sidebar Toggle ----------
+const sidebar = document.getElementById('sidebar');
+const toggleBtns = [document.getElementById('sidebarToggle'), document.getElementById('sidebarToggle2')];
+toggleBtns.forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    sidebar.classList.toggle('open');
+  });
+});
+
+document.addEventListener('click', e => {
+  if(!sidebar.contains(e.target) && !toggleBtns.some(b => b.contains(e.target))) {
+    sidebar.classList.remove('open');
+  }
+});
+
+// ---------- Adjust Sidebar Height ----------
+function adjustSidebar() {
+  const navHeight = document.querySelector('.navbar').offsetHeight;
+  sidebar.style.top = navHeight + 'px';
+  sidebar.style.height = `calc(100% - ${navHeight}px)`;
+}
+window.addEventListener('load', adjustSidebar);
+window.addEventListener('resize', adjustSidebar);
+
+// ---------- Load Sidebar Categories ----------
+async function loadSidebarCategories(){
+  try {
+    const res = await fetch("http://localhost:3000/api/categories");
+    const categories = await res.json();
+    const container = document.getElementById("sidebarCategories");
+    container.innerHTML = "";
+    const map = {};
+    categories.forEach(cat => {
+      const parentId = cat.parent_id ?? 0;
+      if(!map[parentId]) map[parentId] = [];
+      map[parentId].push(cat);
+    });
+
+    function createList(parentId, depth = 0) {
+      if(!map[parentId]) return null;
+      const ul = document.createElement('ul');
+      ul.style.paddingLeft = depth === 0 ? '0' : '14px';
+      ul.style.margin = '6px 0';
+      map[parentId].forEach(cat => {
+        const li = document.createElement('li');
+        const flexRow = document.createElement('div');
+        flexRow.classList.add('flex-row');
+        const a = document.createElement('a');
+        a.textContent = cat.category_name;
+        const hasChildren = map[cat.category_id]?.length > 0;
+        if(!hasChildren) a.href = `products.html?category=${cat.category_id}`;
+        if(depth===0) a.classList.add('grand');
+        flexRow.appendChild(a);
+        const childrenUl = createList(cat.category_id, depth+1);
+        if(childrenUl) {
+          childrenUl.style.display='none';
+          const toggle = document.createElement('span');
+          toggle.textContent = '+';
+          toggle.classList.add('toggle');
+          toggle.addEventListener('click', e => {
+            e.stopPropagation();
+            childrenUl.style.display = childrenUl.style.display==='block' ? 'none':'block';
+            toggle.textContent = childrenUl.style.display==='block' ? '−':'+'; 
+          });
+          a.addEventListener('click', e => { if(hasChildren){ e.preventDefault(); toggle.click(); } });
+          flexRow.appendChild(toggle);
+          li.appendChild(flexRow);
+          li.appendChild(childrenUl);
+        } else li.appendChild(flexRow);
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+    const topUl = createList(0);
+    if(topUl) container.appendChild(topUl);
+  } catch(err){ console.error(err); }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadSidebarCategories();
+});
+
+// ---------- Duplicate Navbar Hide ----------
+const duplicateNavbar = document.getElementById('duplicateNavbar');
+let lastScroll = window.scrollY;
+window.addEventListener('scroll', () => {
+  const currentScroll = window.scrollY;
+  if(currentScroll > lastScroll && currentScroll > 50) duplicateNavbar.classList.add('hidden');
+  else duplicateNavbar.classList.remove('hidden');
+  lastScroll = currentScroll;
+});
+
+// ---------- Cart Count ----------
+function updateCartCount() {
+  const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+  const count = cartItems.length;
+  ['navbarCartCount','duplicateNavbarCartCount','cartCount'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = count;
+  });
+}
+
+// ---------- Search Autocomplete ----------
+let allCategories = [];
+async function loadAllCategories() {
+  try { 
+    const res = await fetch("http://localhost:3000/api/categories"); 
+    allCategories = await res.json(); 
+  } catch(e){ console.error(e); }
+}
+
+const searchInput = document.getElementById('searchInput');
+let currentFocus=-1;
+
+searchInput.addEventListener('input', function() {
+  closeAutocomplete();
+  if(!this.value) return;
+  const val=this.value.toLowerCase();
+  const matches=allCategories.filter(c=>c.category_name.toLowerCase().includes(val));
+  if(matches.length===0) return;
+  const list = document.createElement('div'); 
+  list.setAttribute('id','autocomplete-list');
+  matches.forEach(cat=>{
+    const item=document.createElement('div'); 
+    item.textContent=cat.category_name;
+    item.addEventListener('click', ()=>{ window.location.href=`categoryProducts.html?category=${cat.category_id}`; });
+    list.appendChild(item);
+  });
+  this.parentNode.appendChild(list);
+});
+
+searchInput.addEventListener('keydown', function(e){
+  let list=document.getElementById('autocomplete-list');
+  if(list) list=list.getElementsByTagName('div');
+  if(!list) return;
+  if(e.key==="ArrowDown"){ currentFocus++; addActive(list); }
+  else if(e.key==="ArrowUp"){ currentFocus--; addActive(list); }
+  else if(e.key==="Enter"){ e.preventDefault(); if(currentFocus>-1) list[currentFocus].click(); }
+});
+
+function addActive(list){ if(!list) return; removeActive(list); if(currentFocus>=list.length) currentFocus=0; if(currentFocus<0) currentFocus=list.length-1; list[currentFocus].classList.add("autocomplete-active"); }
+function removeActive(list){ for(let i=0;i<list.length;i++) list[i].classList.remove("autocomplete-active"); }
+function closeAutocomplete(){ const list=document.getElementById('autocomplete-list'); if(list) list.parentNode.removeChild(list); currentFocus=-1; }
+document.addEventListener('click', function(e){ if(e.target!==searchInput) closeAutocomplete(); });
+document.getElementById('searchForm').addEventListener('submit', e=>{
+  e.preventDefault(); const query = searchInput.value.trim(); if(query) window.location.href=`allProducts.html?search=${encodeURIComponent(query)}`;
+});
+
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await updateCartCount();
+  await loadAllCategories();
+});
+
+// ---------- Cart Loading ----------
+async function loadCart() {
+  const cartContainer = document.getElementById("cart-container");
+  const token = localStorage.getItem("token");
+  let cartItems = [];
+
+  if(token){
+    try{
+      const res = await fetch("http://localhost:3000/api/cart", { headers:{ "Authorization": `Bearer ${token}` } });
+      const data = await res.json();
+      if(res.ok && data.success){
+        cartItems = data.cart.map(item=>{
+          return {
+            cart_id: item.cart_id,
+            product_id: item.product_id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size,
+            image: item.image || "http://localhost:3000/Products/default.jpg"
+          };
+        });
+      } else { cartContainer.innerHTML = `<p class="empty-cart">Failed to load cart.</p>`; return; }
+    } catch(err){ console.error(err); cartContainer.innerHTML = `<p class="empty-cart">Error fetching cart.</p>`; return; }
+  } else {
+    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+    if(localCart.length === 0){ cartContainer.innerHTML = `<p class="empty-cart">Your cart is empty.</p>`; return; }
+    try{
+      const res = await fetch("http://localhost:3000/api/products");
+      const data = await res.json();
+      const products = data.products || [];
+      cartItems = localCart.map(item=>{
+        const product = products.find(p=>p.product_id === item.product_id) || {};
+        return {
+          cart_id: Math.random().toString(36).substr(2,9),
+          product_id: item.product_id,
+          name: product.name || "Unknown Product",
+          price: product.price || 0,
+          quantity: item.quantity,
+          size: item.size,
+          image: product.images?.[0] ? (product.images[0].startsWith("http") ? product.images[0] : `http://localhost:3000/${product.images[0]}`) : "http://localhost:3000/Products/default.jpg"
+        };
+      });
+    } catch(err){ console.error(err); cartContainer.innerHTML = `<p class="empty-cart">Error loading products.</p>`; return; }
+  }
+
+  if(cartItems.length === 0){ cartContainer.innerHTML = `<p class="empty-cart">Your cart is empty.</p>`; return; }
+
+  // ---------- Render Scrollable Table ----------
+  let tableHTML = `
+    <div class="cart-table-wrapper">
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  let cartTotal = 0;
+
+  cartItems.forEach(item=>{
+    const total = item.price * item.quantity;
+    cartTotal += total;
+    tableHTML += `
+      <tr data-cart-id="${item.cart_id}" data-product-id="${item.product_id}">
+        <td>
+          <img src="${item.image}" class="cart-image" alt="${item.name}" />
+          ${item.name}
+        </td>
+        <td>${item.size}</td>
+        <td>৳ ${item.price}</td>
+        <td>
+          <button class="qty-btn decrease">-</button>
+          <input type="number" class="qty-input" value="${item.quantity}" min="1" style="width:50px;text-align:center;" />
+          <button class="qty-btn increase">+</button>
+        </td>
+        <td class="item-total">৳ ${total}</td>
+        <td><button class="remove-btn">Remove</button></td>
+      </tr>
+    `;
+  });
+
+  tableHTML += `
+        </tbody>
+      </table>
+    </div>
+    <div class="cart-total">Total: ৳ ${cartTotal}</div>
+    <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
+  `;
+
+  cartContainer.innerHTML = tableHTML;
+
+  // ---------- Quantity & Remove ----------
+  cartContainer.querySelectorAll(".increase").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      const row = e.target.closest("tr");
+      const input = row.querySelector(".qty-input");
+      input.value = parseInt(input.value)+1;
+      updateCartItem(row, parseInt(input.value));
+    });
+  });
+
+  cartContainer.querySelectorAll(".decrease").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      const row = e.target.closest("tr");
+      const input = row.querySelector(".qty-input");
+      if(parseInt(input.value)>1){ input.value = parseInt(input.value)-1; updateCartItem(row, parseInt(input.value)); }
+    });
+  });
+
+  cartContainer.querySelectorAll(".qty-input").forEach(input=>{
+    input.addEventListener("change", e=>{
+      const row = e.target.closest("tr");
+      let val = parseInt(input.value); if(val<1) val=1; input.value=val;
+      updateCartItem(row,val);
+    });
+  });
+
+  cartContainer.querySelectorAll(".remove-btn").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      const row = e.target.closest("tr"); removeCartItem(row);
+    });
+  });
+
+}
+
+// ---------- Update Cart ----------
+async function updateCartItem(row, quantity){
+  const cartId = row.dataset.cartId;
+  const productId = parseInt(row.dataset.productId);
+  const token = localStorage.getItem("token");
+
+  if(token){
+    try{
+      await fetch(`http://localhost:3000/api/cart/${cartId}`, {
+        method:"PUT",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ quantity })
+      });
+    } catch(err){ console.error(err); }
+  } else {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const item = cart.find(c=>c.product_id===productId && c.size === row.querySelector("td:nth-child(2)").innerText);
+    if(item) item.quantity = quantity;
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  const price = parseFloat(row.querySelector("td:nth-child(3)").innerText.replace("৳",""));
+  row.querySelector(".item-total").innerText = `৳ ${price*quantity}`;
+  updateCartTotal();
+}
+
+// ---------- Remove Cart Item ----------
+async function removeCartItem(row){
+  const cartId = row.dataset.cartId;
+  const productId = parseInt(row.dataset.productId);
+  const token = localStorage.getItem("token");
+
+  if(token){
+    try{ await fetch(`http://localhost:3000/api/cart/${cartId}`, { method:"DELETE", headers:{ "Authorization": `Bearer ${token}` } }); }
+    catch(err){ console.error(err); }
+  } else {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart = cart.filter(c=>!(c.product_id===productId && c.size === row.querySelector("td:nth-child(2)").innerText));
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+
+  row.remove();
+  updateCartTotal();
+  if(document.querySelectorAll(".cart-table tbody tr").length===0){
+    document.getElementById("cart-container").innerHTML = `<p class="empty-cart">Your cart is empty.</p>`;
+  }
+}
+
+// ---------- Update Cart Total ----------
+function updateCartTotal(){
+  let total = 0;
+  document.querySelectorAll(".cart-table tbody tr").forEach(row=>{
+    const itemTotal = parseFloat(row.querySelector(".item-total").innerText.replace("৳",""));
+    total += itemTotal;
+  });
+  const totalElem = document.querySelector(".cart-total");
+  if(totalElem) totalElem.innerText = `Total: ৳ ${total}`;
+}
+
+document.addEventListener("DOMContentLoaded", loadCart);
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SuperAdmin Dashboard - PureWave</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; margin:0; background:#f5f6fa; color:#222; }
+    /* Sidebar */
+    .admin-sidebar {
+      position: fixed; top:0; left:0; width:260px; height:100%; background:#fff;
+      box-shadow:2px 0 12px rgba(0,0,0,0.08); padding:30px 20px; display:flex;
+      flex-direction:column; gap:20px; z-index:1000; transition:left 0.3s;
+    }
+    .admin-sidebar h2 { margin:0 0 20px 0; font-size:1.8rem; }
+    .admin-sidebar a { text-decoration:none; color:#222; padding:12px 16px; border-radius:12px; font-weight:600; transition:0.3s; }
+    .admin-sidebar a:hover { background:#3a91f5; color:#fff; }
+    /* Main Content */
+    .main-content { margin-left:280px; padding:50px 40px; transition: margin-left 0.3s; }
+    /* Section Titles */
+    .section-title { font-size:2rem; font-weight:900; margin-bottom:30px; border-left:6px solid #222; padding-left:16px; }
+    /* Dashboard Grid & Cards */
+    .dashboard-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:30px; margin-bottom:50px; }
+    .card { background:#fff; border-radius:18px; padding:30px 24px; box-shadow:0 2px 12px rgba(34,34,34,0.07); transition:0.3s; }
+    .card:hover { box-shadow:0 12px 36px rgba(34,34,34,0.16); transform:translateY(-6px); }
+    .card h3 { margin:0 0 16px 0; font-size:1.35rem; color:#2f3542; }
+    .card p { margin:0; font-size:1rem; color:#555; }
+    .btn { display:inline-block; background:linear-gradient(135deg,#222,#3a91f5); color:#fff; padding:14px 36px; border-radius:40px; font-size:1rem; font-weight:600; text-decoration:none; box-shadow:0 8px 28px rgba(58,145,245,0.4); cursor:pointer; transition:0.3s; margin-top:10px; }
+    .btn:hover { background:linear-gradient(135deg,#3a91f5,#222); box-shadow:0 12px 36px rgba(58,145,245,0.6); transform:scale(1.05); }
+    table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(34,34,34,0.07); margin-top:20px; }
+    table th, table td { padding:16px 20px; text-align:left; border-bottom:1px solid #eee; }
+    table th { background:#f1f2f6; font-weight:700; }
+    table tr:nth-child(even){ background:#f8f9fa; }
+    table tr:hover { background:#e6f0ff; }
+    section { margin-bottom:70px; }
+    input, select, textarea { padding:10px 14px; margin:6px 0; border-radius:12px; border:1px solid #ccc; font-size:1rem; }
+    .category-banner { margin:24px 0; text-align:center; padding:12px 0; background:linear-gradient(to right,#f1f2f6,#dfe4ea); border-radius:12px; font-weight:800; letter-spacing:1px; }
+    .status-card { display:inline-block; background:#f1f2f6; padding:16px 24px; border-radius:12px; margin-right:16px; min-width:150px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .actions button { margin-right:8px; padding:4px 8px; font-size:0.9rem; border-radius:8px; border:none; cursor:pointer; }
+    .actions button.edit { background:#ffa500; color:#fff; }
+    .actions button.delete { background:#ff4d4f; color:#fff; }
+    /* Responsive */
+    @media(max-width:768px){
+      .main-content { margin-left:0; padding:20px; }
+      .admin-sidebar { width:100%; height:auto; position:relative; flex-direction:row; overflow-x:auto; }
+      .admin-sidebar h2 { display:none; }
+      .admin-sidebar a { white-space:nowrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="admin-sidebar" id="sidebar">
+  <h2>Admin Panel</h2>
+  <a href="#dashboard">Dashboard</a>
+  <a href="#users">Users</a>
+  <a href="#admins">Admins</a>
+  <a href="#products">Products</a>
+  <a href="#orders">Orders</a>
+  <a href="#announcements">Announcements</a>
+  <a href="#settings">Settings</a>
+  <a href="#analytics">Analytics</a>
+  <a href="#security">Security</a>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+
+  <!-- Dashboard -->
+  <section id="dashboard">
+    <h2 class="section-title">Dashboard Overview</h2>
+    <div class="dashboard-grid">
+      <div class="card"><h3>Sales Today</h3><p id="salesToday">-</p></div>
+      <div class="card"><h3>Orders Pending</h3><p id="ordersPending">-</p></div>
+      <div class="card"><h3>Best Selling</h3><p id="bestSelling">-</p></div>
+      <div class="card"><h3>New Customers</h3><p id="newCustomers">-</p></div>
+      <div class="card"><h3>Low Stock Alerts</h3><p id="lowStock">-</p></div>
+      <div class="card"><h3>Active Promotions</h3><p id="activePromotions">-</p></div>
+    </div>
+  </section>
+
+  <!-- Users -->
+  <section id="users">
+    <h2 class="section-title">User Management</h2>
+    <table id="usersTable">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Created At</th><th>Last Login</th><th>Login Count</th><th>Actions</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Admins -->
+  <section id="admins">
+    <h2 class="section-title">Admin Management</h2>
+    <input type="text" id="adminName" placeholder="Admin Name">
+    <input type="email" id="adminEmail" placeholder="Email">
+    <input type="password" id="adminPassword" placeholder="Password">
+    <select id="adminRole">
+      <option value="SuperAdmin">SuperAdmin</option>
+      <option value="Marketing">Marketing</option>
+      <option value="Inventory">Inventory</option>
+      <option value="Sales">Sales</option>
+    </select>
+    <button class="btn" onclick="addAdmin()">Add Admin</button>
+    <p id="addAdminMessage"></p>
+    <table id="adminsTable">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Created At</th><th>Last Login</th><th>Login Count</th><th>Actions</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Products -->
+  <section id="products">
+    <h2 class="section-title">Product Management</h2>
+    <input type="text" id="productName" placeholder="Product Name">
+    <input type="number" id="productPrice" placeholder="Price">
+    <label>Premium: <input type="checkbox" id="productPremium"></label>
+    <label>Limited Edition: <input type="checkbox" id="productLimited"></label>
+    <button class="btn" onclick="addProduct()">Add Product</button>
+    <table id="productsTable">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Price</th><th>Premium</th><th>Limited</th><th>Actions</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Orders -->
+  <section id="orders">
+    <h2 class="section-title">Orders Management</h2>
+    <input type="date" id="orderDate">
+    <select id="orderStatus">
+      <option value="">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="shipped">Shipped</option>
+      <option value="delivered">Delivered</option>
+    </select>
+    <select id="orderVIP">
+      <option value="">All Clients</option>
+      <option value="vip">VIP</option>
+      <option value="regular">Regular</option>
+    </select>
+    <button class="btn" onclick="fetchOrders()">Filter Orders</button>
+    <table id="ordersTable">
+      <thead>
+        <tr><th>ID</th><th>Client</th><th>Total</th><th>Status</th><th>Date</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Announcements -->
+  <section id="announcements">
+    <h2 class="section-title">Announcements / Tasks</h2>
+    <textarea id="announcementText" placeholder="Write announcement or task"></textarea>
+    <button class="btn" onclick="sendAnnouncement()">Send / Assign</button>
+    <table id="announcementsTable">
+      <thead>
+        <tr><th>ID</th><th>Message</th><th>Assigned To</th><th>Date</th><th>Status</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Settings -->
+  <section id="settings">
+    <h2 class="section-title">Global Settings</h2>
+    <input type="text" id="currency" placeholder="Default Currency">
+    <input type="text" id="shipping" placeholder="Shipping Methods">
+    <input type="number" id="taxRate" placeholder="Tax Rate %">
+    <label>
+      Product Availability:
+      <select id="productAvailability">
+        <option value="enabled">Enabled</option>
+        <option value="disabled">Disabled</option>
+      </select>
+    </label>
+    <button class="btn" onclick="saveSettings()">Save Settings</button>
+    <div style="margin-top:20px;">
+      <div class="status-card">Server Health: ✅</div>
+      <div class="status-card">Last Backup: 02:30 AM</div>
+      <div class="status-card">Uptime: 99.99%</div>
+    </div>
+  </section>
+
+  <!-- Analytics -->
+  <section id="analytics">
+    <h2 class="section-title">Analytics & Reports</h2>
+    <div class="dashboard-grid">
+      <div class="status-card" id="totalUsers">Total Users: -</div>
+      <div class="status-card" id="totalAdmins">Total Admin Actions: -</div>
+      <div class="status-card" id="productsSold">Products Sold: -</div>
+      <div class="status-card" id="revenue">Revenue: -</div>
+    </div>
+  </section>
+
+  <!-- Security -->
+  <section id="security">
+    <h2 class="section-title">Security & Compliance</h2>
+    <table id="securityLogsTable">
+      <thead>
+        <tr><th>Event</th><th>User/Admin</th><th>Date/Time</th><th>Action</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p>Data Privacy Compliance: ✅ GDPR / ✅ CCPA</p>
+  </section>
+
+</div>
+
+<script>
+  // ------------------- Fetch / Add Functions -------------------
+  async function fetchUsers(){ const res=await fetch('/api/users'); const data=await res.json(); const tbody=document.querySelector('#usersTable tbody'); tbody.innerHTML=''; data.forEach(u=>{ tbody.innerHTML+=`<tr><td>${u.id}</td><td>${u.name}</td><td>${u.email}</td><td>${u.role||'User'}</td><td>${u.created_at}</td><td>${u.last_login||'-'}</td><td>${u.login_count||0}</td><td class="actions"><button class="edit">Edit</button><button class="delete">Delete</button></td></tr>`; });}
+  async function fetchAdmins(){ const res=await fetch('/api/admins'); const data=await res.json(); const tbody=document.querySelector('#adminsTable tbody'); tbody.innerHTML=''; data.forEach(a=>{ tbody.innerHTML+=`<tr><td>${a.id}</td><td>${a.name}</td><td>${a.email}</td><td>${a.role}</td><td>${a.created_at}</td><td>${a.last_login||'-'}</td><td>${a.login_count||0}</td><td class="actions"><button class="edit">Edit</button><button class="delete">Delete</button></td></tr>`; });}
+  async function addAdmin(){ const name=document.getElementById('adminName').value; const email=document.getElementById('adminEmail').value; const password=document.getElementById('adminPassword').value; const role=document.getElementById('adminRole').value; const res=await fetch('/api/admins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password,role})}); const msg=await res.json(); document.getElementById('addAdminMessage').innerText=msg.message; fetchAdmins();}
+  async function fetchProducts(){ const res=await fetch('/api/products'); const data=await res.json(); const tbody=document.querySelector('#productsTable tbody'); tbody.innerHTML=''; data.forEach(p=>{ tbody.innerHTML+=`<tr><td>${p.product_id}</td><td>${p.name}</td><td>${p.price}</td><td>${p.premium?'Yes':'No'}</td><td>${p.limited?'Yes':'No'}</td><td class="actions"><button class="edit">Edit</button><button class="delete">Delete</button></td></tr>`; });}
+  async function addProduct(){ const name=document.getElementById('productName').value; const price=document.getElementById('productPrice').value; const premium=document.getElementById('productPremium').checked; const limited=document.getElementById('productLimited').checked; await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,price,premium,limited})}); fetchProducts();}
+  async function fetchOrders(){ let date=document.getElementById('orderDate').value; let status=document.getElementById('orderStatus').value; let vip=document.getElementById('orderVIP').value; let url='/api/orders?'; if(date) url+=`date=${date}&`; if(status) url+=`status=${status}&`; if(vip) url+=`vip=${vip}&`; const res=await fetch(url); const data=await res.json(); const tbody=document.querySelector('#ordersTable tbody'); tbody.innerHTML=''; data.forEach(o=>{ tbody.innerHTML+=`<tr><td>${o.id}</td><td>${o.client}</td><td>${o.total}</td><td>${o.status}</td><td>${o.date}</td></tr>`; });}
+  async function fetchSecurityLogs(){ const res=await fetch('/api/activities'); const data=await res.json(); const tbody=document.querySelector('#securityLogsTable tbody'); tbody.innerHTML=''; data.forEach(a=>{ tbody.innerHTML+=`<tr><td>${a.event}</td><td>${a.user}</td><td>${a.time}</td><td><button class="btn">Force Reset</button></td></tr>`; });}
+  async function sendAnnouncement(){ const message=document.getElementById('announcementText').value; await fetch('/api/announcements',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})}); document.getElementById('announcementText').value=''; fetchAnnouncements();}
+  async function fetchAnnouncements(){ const res=await fetch('/api/announcements'); const data=await res.json(); const tbody=document.querySelector('#announcementsTable tbody'); tbody.innerHTML=''; data.forEach(a=>{ tbody.innerHTML+=`<tr><td>${a.id}</td><td>${a.message}</td><td>${a.assigned_to||'-'}</td><td>${a.date}</td><td>${a.status||'Pending'}</td></tr>`; });}
+  async function saveSettings(){ const settings={currency:document.getElementById('currency').value,shipping:document.getElementById('shipping').value,taxRate:document.getElementById('taxRate').value,availability:document.getElementById('productAvailability').value}; await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(settings)}); alert('Settings saved!');}
+
+  // ------------------- Initial Fetches -------------------
+  fetchUsers(); fetchAdmins(); fetchProducts(); fetchOrders(); fetchSecurityLogs(); fetchAnnouncements();
+</script>
+<script src="sidebar.js"></script>
+</body>
+</html>

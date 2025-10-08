@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PureWave</title>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="favicon.png">
+
+<style>
+/* ---------- Global Styles ---------- */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', Arial, sans-serif; }
+body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top:100px; }
+
+/* ---------- Navbar ---------- */
+.navbar, .duplicate-navbar {
+  width:100%; 
+  background:#fff; 
+  box-shadow:0 2px 8px rgba(0,0,0,0.1); 
+  position:fixed; 
+  top:0; 
+  z-index:1000; 
+}
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap:16px;
+  width:100%;
+  padding:20px;
+}
+.nav-left { display:flex; align-items:center; gap:16px; }
+.nav-left .brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
+.nav-left .brand-icon { height:25px; }
+.nav-left .logo { font-size:1.8rem; font-weight:bold; color:#222; font-family:'Raleway', sans-serif; }
+
+/* Center search bar */
+.nav-center { flex:1; display:flex; justify-content:center; align-items:center; position:relative; }
+.nav-center input[type="text"] {
+  width:100%;
+  max-width:300px;
+  padding:8px 12px;
+  border:1px solid #ccc;
+  border-radius:24px 0 0 24px;
+  outline:none;
+}
+.nav-center button {
+  padding:8px 16px;
+  border:none;
+  background:#000;
+  color:#fff;
+  border-radius:0 24px 24px 0;
+  cursor:pointer;
+  transition: background 0.3s;
+}
+.nav-center button:hover { background:#333; }
+
+.nav-links { display:flex; gap:50px; align-items:center; }
+.nav-links a { color:#222; font-size:1.4rem; transition: color 0.3s; position:relative; }
+.nav-links a:hover { color:#3a91f5; }
+
+/* Duplicate Navbar */
+.duplicate-navbar { z-index:1100; transition: transform 0.3s ease, opacity 0.3s ease; }
+.duplicate-navbar.hidden { transform: translateY(-100%); opacity: 0; }
+
+/* Sidebar */
+#sidebar { position: fixed; top: 100px; left: -400px; width: 400px; height: calc(100% - 100px); background:#fafafa; color:#1a1a1a; overflow-y:auto; box-shadow:3px 0 12px rgba(0,0,0,0.1); padding:20px; transition:left 0.3s ease; z-index:1200; }
+#sidebar.open { left:0; }
+#sidebar::-webkit-scrollbar { width:8px; }
+#sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius:4px; }
+#sidebar h2 { margin-top:0; margin-bottom:12px; font-size:1.3rem; font-weight:700; }
+#sidebar ul { list-style:none; padding-left:0; margin:0; }
+#sidebar ul li { margin:6px 0; }
+#sidebar ul li .flex-row { display:flex; justify-content:space-between; align-items:center; }
+#sidebar ul li a { text-decoration:none; color:#222; font-weight:600; transition:color 0.2s ease; }
+#sidebar ul li a:hover { color:#3a91f5; }
+#sidebar ul li span.toggle { cursor:pointer; font-weight:900; font-size:1.5rem; color:#000; margin-left:8px; user-select:none; }
+#sidebar ul li a.grand { font-weight:700; font-size:1.1rem; }
+#sidebar ul li a.parent { font-weight:600; font-size:1rem; }
+#sidebar ul li a.child { font-weight:500; font-size:0.95rem; }
+
+/* Category Cards */
+.category-grid {display: grid;justify-content: center;grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));gap: 32px;width: 100%;max-width: 1280px;margin: 40px auto;padding: 0 20px;}
+.category-card {position: relative; width: 100%; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.08); transition: all 0.3s ease;}
+.category-card:hover {transform: translateY(-6px); box-shadow: 0 12px 28px rgba(0,0,0,0.12);}
+
+.category-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease, filter 0.4s ease; display: block; filter: brightness(1); }
+
+.category-card .notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 3px 8px;
+  border-radius: 0 0 12px 12px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.category-card .bottom-notch {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 4px 12px;
+  border-radius: 12px 0 0 0; 
+  z-index: 2;
+  box-shadow: 2px -2px 6px rgba(0,0,0,0.3);
+  clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%); 
+}
+
+/* Scroll animation */
+.from-left { transform: translateX(-40px) scale(0.95); }
+.from-right { transform: translateX(40px) scale(0.95); }
+.from-bottom { transform: translateY(40px) scale(0.95); }
+.show { opacity:1; transform:scale(1) translate(0,0); transition: transform 0.8s cubic-bezier(0.4,0,0.2,1), opacity 0.8s ease; }
+
+/* Buttons */
+.btn { display:inline-block; background:linear-gradient(135deg,#222,#3a91f5); color:#fff; padding:16px 48px; border-radius:40px; font-size:1.1rem; font-weight:600; text-decoration:none; box-shadow:0 8px 28px rgba(58,145,245,0.4); transition:all 0.3s ease; cursor:pointer; width:fit-content; }
+.btn:hover, .btn:focus { background:linear-gradient(135deg,#3a91f5,#222); box-shadow:0 12px 36px rgba(58,145,245,0.6); transform:scale(1.05); outline:none; }
+
+/* Hero Section */
+.hero { text-align:center; position:relative; padding:0; overflow:hidden; }
+.hero img { width:100%; height:auto; display:block; object-fit:cover; }
+
+/* Featured Categories */
+.products h2 {
+  text-align:center;
+  font-family:'Raleway', sans-serif;
+  font-weight:300;
+  font-size:2.4rem;
+  margin-bottom:8px;
+  background:#d9f5f9; 
+  color:#1080a2; 
+  padding:12px 0;
+  border-radius:8px;
+}
+.products p.subtitle { text-align:center; color:#666; font-size:1rem; margin-bottom:24px; }
+.products hr.divider { width:60px; height:3px; background:#3a91f5; border:none; margin:0 auto 32px; border-radius:2px; }
+
+/* Footer */
+footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-size:0.9rem; }
+
+/* Hero Buttons Bar */
+.hero-buttons-bar a { border: none; position: relative; overflow: hidden; background: #f5f5f5; color: #333; font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+.hero-buttons-bar a:not(.shop-now-btn) { background: #f5f5f5; }
+.hero-buttons-bar .shop-now-btn { clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%); }
+
+/* Navbar Cart Count Bubble */
+.nav-cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #3a91f5;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Floating cart */
+#floatingCart {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width:50px;
+  height:50px;
+  background:#3a91f5;
+  color:#fff;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:1.5rem;
+  z-index:1200;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+#floatingCart span { 
+  position:absolute; 
+  top:-8px; 
+  right:-8px; 
+  width:18px; 
+  height:18px; 
+  background:#ff0000; 
+  color:#fff; 
+  font-size:0.75rem; 
+  border-radius:50%; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  font-weight:bold; 
+}
+
+/* Autocomplete dropdown */
+#autocomplete-list {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  top: 38px;
+  left: 0;
+  z-index: 9999;
+  border-radius: 0 0 8px 8px;
+}
+#autocomplete-list div {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+</style>
+
+<!-----------------------FLOATING W BACKGROUND-------------->
+
+<style>
+  #floatingBackground {
+  position: absolute;
+  top: calc(100px +  /* navbar */ 
+           100% of hero image height + 
+           hero buttons height); /* adjust as needed */
+  left: 0;
+  width: 100%;
+  height: 2000px; /* large enough to cover categories & below */
+  pointer-events: none; /* allow clicking through */
+  overflow: hidden;
+  z-index: 0; /* behind the category cards */
+}
+
+.floating-icon {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  opacity: 0.1;
+  animation: float 12s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); }
+  25%  { transform: translateY(-20px) translateX(10px) rotate(10deg); }
+  50%  { transform: translateY(20px) translateX(-10px) rotate(-10deg); }
+  75%  { transform: translateY(-10px) translateX(5px) rotate(5deg); }
+  100% { transform: translateY(0) translateX(0) rotate(0deg); }
+}
+
+/* Example positions for multiple icons */
+#floatingBackground .icon1 { top: 50px; left: 10%; animation-duration: 14s; }
+#floatingBackground .icon2 { top: 200px; right: 15%; animation-duration: 18s; }
+#floatingBackground .icon3 { top: 400px; left: 30%; animation-duration: 20s; }
+/* Add more as needed */
+
+</style>
+</head>
+<body>
+
+<!-- Duplicate Navbar -->
+<header class="navbar duplicate-navbar" id="duplicateNavbar">
+  <div class="nav-container">
+    <div class="nav-left">
+      <button id="sidebarToggle2" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
+      <a href="index.html" class="brand">
+        <img src="icon.png" alt="Brand Icon" class="brand-icon">
+        <span class="logo">PureWave</span>
+      </a>
+    </div>
+    <div class="nav-center">
+      <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
+        <input type="text" id="searchInput" placeholder="Search products...">
+        <button type="submit"><i class="fas fa-search"></i></button>
+      </form>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
+      <a href="products.html" title="Shop"><i class="fas fa-store"></i></a>
+      <a href="cart.html" title="Cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="nav-cart-count" id="duplicateNavbarCartCount">0</span>
+      </a>
+      <a href="userprofile.html" title="Profile"><i class="fas fa-user"></i></a>
+    </nav>
+  </div>
+</header>
+
+<!-- Original Navbar -->
+<header class="navbar" id="navbar">
+  <div class="nav-container">
+    <div class="nav-left">
+      <button id="sidebarToggle" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
+      <a href="index.html" class="brand">
+        <img src="icon.png" alt="Brand Icon" class="brand-icon">
+        <span class="logo">PureWave</span>
+      </a>
+    </div>
+    
+<nav class="nav-links">
+  <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
+  <a href="javascript:void(0);" id="navbarSearchIcon" title="Search"><i class="fas fa-search"></i></a>
+  <a href="products.html" title="Shop"><i class="fas fa-store"></i></a>
+  <a href="cart.html" title="Cart">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="nav-cart-count" id="navbarCartCount">0</span>
+  </a>
+  <a href="userprofile.html" title="Profile"><i class="fas fa-user"></i></a>
+</nav>
+
+<!-- Dropdown Search Bar -->
+<div id="navbarSearchDropdown" style="display:none; position:absolute; top:100%; right:0; width:250px; background:#fff; border:1px solid #ccc; border-radius:8px; padding:8px; z-index:1000;">
+  <form id="navbarDropdownForm" style="display:flex;">
+    <input type="text" id="navbarDropdownInput" placeholder="Search products..." style="flex:1; padding:6px 8px; border:1px solid #ccc; border-radius:4px 0 0 4px; outline:none;">
+    <button type="submit" style="padding:6px 10px; border:none; background:#333; color:#fff; border-radius:0 4px 4px 0; cursor:pointer;">
+      <i class="fas fa-search"></i>
+    </button>
+  </form>
+</div>
+
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+  <img src="hero.jpg" alt="Hero Image">
+</section>
+
+<!-- Hero Buttons Bar -->
+<section class="hero-buttons-bar">
+    <a href="products.html?category=0" class="hero-btn shaped-btn">ShopNow</a>
+  <a href="products.html?category=1" class="hero-btn shaped-btn">Men</a>
+  <a href="products.html?category=2" class="hero-btn shaped-btn">Women</a>
+  <a href="products.html?category=3" class="hero-btn shaped-btn">Kids</a>
+</section>
+
+
+<style>
+/* ---------- Hero Buttons Bar ---------- */
+.hero-buttons-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-buttons-bar a.hero-btn {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+  color: #CC5500;
+  background: #FFE5B4;
+  box-shadow: 0 8px 28px #CC5500;
+}
+
+.hero-buttons-bar a.hero-btn:hover {
+  background: #CC5500;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(58,145,245,0.6);
+}
+
+
+/* Men/Women/Kids Buttons (concave arrow both sides) */
+.hero-buttons-bar a.shaped-btn {
+  clip-path: polygon(
+  0 0,
+  calc(100% - 20px) 0,
+  100% 50%,
+  calc(100% - 20px) 100%,
+  0 100%,
+  20px 50%
+);
+
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-buttons-bar { flex-direction: column; gap: 12px; }
+  .hero-buttons-bar a.hero-btn { flex: unset; width: 100%; }
+}
+</style>
+
+<!-- Featured Categories -->
+<section class="products">
+  <div class="container" style="max-width:1200px;margin:auto;padding:40px 20px;">
+    <h2>Featured Categories</h2>
+    <!-- Floating Icons Background -->
+    <div id="floatingBackground"></div>
+    <div id="categoriesGrid" class="category-grid"></div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2025 PureWave. All rights reserved.
+</footer>
+
+<aside id="sidebar">
+  <h2>Categories</h2>
+  <ul id="sidebarCategories"></ul>
+</aside>
+
+<!-- Floating Cart -->
+<a href="cart.html" id="floatingCart">
+  <i class="fas fa-shopping-cart"></i>
+  <span id="cartCount">0</span>
+</a>
+
+<script>
+// ------------------ Search ------------------
+document.getElementById('searchForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const query=document.getElementById('searchInput').value.trim();
+  if(query) window.location.href=`products.html?search=${encodeURIComponent(query)}`;
+});
+
+const navbarSearchIcon = document.getElementById('navbarSearchIcon');
+const navbarSearchDropdown = document.getElementById('navbarSearchDropdown');
+const navbarDropdownInput = document.getElementById('navbarDropdownInput');
+
+navbarSearchIcon.addEventListener('click', (e) => {
+  e.stopPropagation();
+  navbarSearchDropdown.style.display = navbarSearchDropdown.style.display === 'block' ? 'none' : 'block';
+  if(navbarSearchDropdown.style.display === 'block') navbarDropdownInput.focus();
+});
+
+document.addEventListener('click', (e) => {
+  if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon){
+    navbarSearchDropdown.style.display = 'none';
+  }
+});
+
+document.getElementById('navbarDropdownForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const query = navbarDropdownInput.value.trim();
+  if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+});
+
+// ------------------ Sidebar ------------------
+const sidebarToggle = document.getElementById('sidebarToggle');
+const sidebarToggle2 = document.getElementById('sidebarToggle2');
+const sidebar = document.getElementById('sidebar');
+sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+sidebarToggle2.addEventListener('click', () => sidebar.classList.toggle('open'));
+document.addEventListener('click', e => {
+  if(!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebarToggle2.contains(e.target)) sidebar.classList.remove('open');
+});
+
+function adjustSidebar() {
+  const navHeight = document.querySelector('.navbar').offsetHeight;
+  sidebar.style.top = navHeight + 'px';
+  sidebar.style.height = `calc(100% - ${navHeight}px)`;
+}
+window.addEventListener('load', adjustSidebar);
+window.addEventListener('resize', adjustSidebar);
+
+// ------------------ Categories ------------------
+async function loadCategories(){
+  try{
+    const res = await fetch("http://localhost:3000/api/categories");
+    const categories = await res.json();
+    const container = document.getElementById("categoriesGrid");
+    container.innerHTML = "";
+    const categoryMap = {};
+    categories.forEach(cat => categoryMap[cat.category_id] = cat);
+    categories.filter(c => c.thumbnail && c.thumbnail.url).forEach((cat, index) => {
+      const card = document.createElement("div");
+      card.classList.add("category-card");
+      if(index % 3 === 0) card.classList.add("from-left");
+      else if(index % 3 === 1) card.classList.add("from-bottom");
+      else card.classList.add("from-right");
+      const parentName = cat.parent_id && categoryMap[cat.parent_id] 
+                        ? categoryMap[cat.parent_id].category_name 
+                        : cat.category_name;
+      card.innerHTML = `
+        <a href="products.html?category=${cat.category_id}" style="text-decoration:none;color:inherit;">
+          <div class="notch">${cat.category_name}</div>
+          <div class="parent-text" style="
+            position:absolute;
+            bottom:8px;
+            left:8px;
+            color:#fff;
+            font-size:1.1rem;
+            font-weight:600;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            z-index:3;
+          ">${parentName}</div>
+          <img src="${cat.thumbnail.url}" alt="${cat.category_name}" />
+        </a>
+      `;
+      container.appendChild(card);
+    });
+    document.querySelectorAll(".category-card").forEach(c => {
+      new IntersectionObserver(e => {
+        e.forEach(entry => {
+          if(entry.isIntersecting) entry.target.classList.add("show");
+          else entry.target.classList.remove("show");
+        });
+      }, {threshold:0.15}).observe(c)
+    });
+  } catch(err){ console.error(err);}
+}
+
+// Sidebar categories
+async function loadSidebarCategories(){
+  try{
+    const res=await fetch("http://localhost:3000/api/categories");
+    const categories=await res.json();
+    const container=document.getElementById("sidebarCategories");
+    const map={};
+    categories.forEach(cat=>{ const parentId=cat.parent_id??0; if(!map[parentId]) map[parentId]=[]; map[parentId].push(cat); });
+    function createList(parentId, depth=0){
+      if(!map[parentId]) return null;
+      const ul=document.createElement('ul'); ul.style.paddingLeft=depth===0?'0':'14px'; ul.style.margin='6px 0';
+      map[parentId].forEach(cat=>{
+        const li=document.createElement('li');
+        const hasChildren=map[cat.category_id] && map[cat.category_id].length>0;
+        const flexRow=document.createElement('div'); flexRow.classList.add('flex-row');
+        const a=document.createElement('a'); a.textContent=cat.category_name;
+        if(!hasChildren) a.href=`products.html?category=${cat.category_id}`; else a.href="#";
+        if(depth===0) a.classList.add('grand'); else if(depth===1) a.classList.add('parent'); else a.classList.add('child');
+        flexRow.appendChild(a);
+        const childrenUl=createList(cat.category_id,depth+1);
+        if(childrenUl){
+          childrenUl.style.display='none';
+          const toggle=document.createElement('span'); toggle.textContent='+'; toggle.classList.add('toggle');
+          function toggleChildren(e){ e.stopPropagation(); childrenUl.style.display=childrenUl.style.display==='block'?'none':'block'; toggle.textContent=childrenUl.style.display==='block'?'−':'+'; }
+          toggle.addEventListener('click',toggleChildren);
+          a.addEventListener('click', e=>{ if(hasChildren){ e.preventDefault(); toggleChildren(e); }});
+          flexRow.appendChild(toggle);
+          li.appendChild(flexRow); li.appendChild(childrenUl);
+        } else li.appendChild(flexRow);
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+    const topUl=createList(0);
+    if(topUl) container.appendChild(topUl);
+  } catch(err){ console.error(err); }
+}
+
+// Update cart counts
+function updateCartCount(){
+  let cartItems=JSON.parse(localStorage.getItem('cart'))||[];
+  document.getElementById('cartCount').textContent=cartItems.length;
+  document.getElementById('navbarCartCount').textContent=cartItems.length;
+  document.getElementById('duplicateNavbarCartCount').textContent=cartItems.length;
+}
+
+// Duplicate navbar scroll hide
+const duplicateNavbar=document.getElementById('duplicateNavbar');
+let lastScroll=window.scrollY;
+window.addEventListener('scroll', ()=>{
+  let currentScroll=window.scrollY;
+  if(currentScroll>lastScroll && currentScroll>50) duplicateNavbar.classList.add('hidden');
+  else duplicateNavbar.classList.remove('hidden');
+  lastScroll=currentScroll;
+});
+
+// Hide dropdown search when scrolling up, keep when scrolling down
+let lastScrollPos = window.scrollY;
+
+window.addEventListener('scroll', () => {
+  const currentScroll = window.scrollY;
+
+  if (currentScroll < lastScrollPos) {
+    // Scrolling up → hide dropdown
+    if (navbarSearchDropdown.style.display === 'block') {
+      navbarSearchDropdown.style.display = 'none';
+      closeDropdownAutocomplete();
+    }
+  }
+  // Scrolling down → do nothing (keep open)
+
+  lastScrollPos = currentScroll;
+});
+
+
+// Autocomplete for search
+let allCategories = [];
+async function loadAllCategories() {
+  try {
+    const res = await fetch("http://localhost:3000/api/categories");
+    allCategories = await res.json();
+  } catch (err) { console.error(err); }
+}
+
+const searchInput = document.getElementById('searchInput');
+let currentFocus = -1;
+
+searchInput.addEventListener('input', function() {
+  closeAutocomplete();
+  if(!this.value) return;
+  const val = this.value.toLowerCase();
+  const matches = allCategories.filter(c => c.category_name.toLowerCase().includes(val));
+  if(matches.length === 0) return;
+  const list = document.createElement('div');
+  list.setAttribute('id', 'autocomplete-list');
+  matches.forEach(cat => {
+    const item = document.createElement('div');
+    item.textContent = cat.category_name;
+    item.addEventListener('click', () => {
+      window.location.href = `products.html?category=${cat.category_id}`;
+    });
+    list.appendChild(item);
+  });
+  this.parentNode.appendChild(list);
+});
+
+searchInput.addEventListener('keydown', function(e) {
+  let list = document.getElementById('autocomplete-list');
+  if(list) list = list.getElementsByTagName('div');
+  if(!list) return;
+  if(e.key === "ArrowDown") { currentFocus++; addActive(list); }
+  else if(e.key === "ArrowUp") { currentFocus--; addActive(list); }
+  else if(e.key === "Enter") { e.preventDefault(); if(currentFocus > -1) list[currentFocus].click(); }
+});
+
+function addActive(list) { if(!list) return false; removeActive(list); if(currentFocus >= list.length) currentFocus = 0; if(currentFocus < 0) currentFocus = list.length - 1; list[currentFocus].classList.add("autocomplete-active"); }
+function removeActive(list) { for(let i=0;i<list.length;i++) list[i].classList.remove("autocomplete-active"); }
+function closeAutocomplete() { const list = document.getElementById('autocomplete-list'); if(list) list.parentNode.removeChild(list); currentFocus = -1; }
+document.addEventListener('click', function(e) { if(e.target !== searchInput) closeAutocomplete(); });
+
+// Initialize
+document.addEventListener("DOMContentLoaded", ()=>{
+  loadCategories();
+  loadSidebarCategories();
+  updateCartCount();
+  loadAllCategories();
+});
+</script>
+
+<script>
+// ---------- Autocomplete for Dropdown Search ----------
+const dropdownInput = document.getElementById('navbarDropdownInput');
+let dropdownFocus = -1;
+
+dropdownInput.addEventListener('input', function() {
+  closeDropdownAutocomplete();
+  if (!this.value) return;
+  const val = this.value.toLowerCase();
+  const matches = allCategories.filter(c => c.category_name.toLowerCase().includes(val));
+  if (matches.length === 0) return;
+  
+  const list = document.createElement('div');
+  list.setAttribute('id', 'dropdown-autocomplete-list');
+  list.style.position = 'absolute';
+  list.style.background = '#fff';
+  list.style.border = '1px solid #ccc';
+  list.style.width = '100%';
+  list.style.top = '38px';
+  list.style.left = '0';
+  list.style.maxHeight = '200px';
+  list.style.overflowY = 'auto';
+  list.style.zIndex = '1000';
+  list.style.borderRadius = '0 0 8px 8px';
+
+  matches.forEach(cat => {
+    const item = document.createElement('div');
+    item.textContent = cat.category_name;
+    item.style.padding = '8px 12px';
+    item.style.cursor = 'pointer';
+    item.addEventListener('click', () => {
+      window.location.href = `products.html?category=${cat.category_id}`;
+    });
+    list.appendChild(item);
+  });
+
+  this.parentNode.appendChild(list);
+});
+
+dropdownInput.addEventListener('keydown', function(e) {
+  let list = document.getElementById('dropdown-autocomplete-list');
+  if (list) list = list.getElementsByTagName('div');
+  if (!list) return;
+  if (e.key === "ArrowDown") { dropdownFocus++; addDropdownActive(list); }
+  else if (e.key === "ArrowUp") { dropdownFocus--; addDropdownActive(list); }
+  else if (e.key === "Enter") { e.preventDefault(); if (dropdownFocus > -1) list[dropdownFocus].click(); }
+});
+
+function addDropdownActive(list) {
+  if (!list) return false;
+  removeDropdownActive(list);
+  if (dropdownFocus >= list.length) dropdownFocus = 0;
+  if (dropdownFocus < 0) dropdownFocus = list.length - 1;
+  list[dropdownFocus].classList.add("autocomplete-active");
+}
+
+function removeDropdownActive(list) {
+  for (let i = 0; i < list.length; i++) list[i].classList.remove("autocomplete-active");
+}
+
+function closeDropdownAutocomplete() {
+  const list = document.getElementById('dropdown-autocomplete-list');
+  if (list) list.parentNode.removeChild(list);
+  dropdownFocus = -1;
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target !== dropdownInput) closeDropdownAutocomplete();
+});
+
+// Load categories once
+loadAllCategories();
+</script>
+
+
+<!-----------------------FLOATING W BACKGROUND-------------->
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const floatingBg = document.getElementById("floatingBackground");
+  const iconCount = 200; // total number of icons
+  const iconSize = 60; // icon width & height in px
+  const placedPositions = [];
+
+  function isOverlapping(x, y) {
+    for (const pos of placedPositions) {
+      const dx = pos.x - x;
+      const dy = pos.y - y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < iconSize + 10) return true; // 10px minimum gap
+    }
+    return false;
+  }
+
+  for (let i = 0; i < iconCount; i++) {
+    const icon = document.createElement("img");
+    icon.src = "w-icon.svg"; 
+    icon.classList.add("floating-icon");
+
+    let tries = 0;
+    let x, y;
+    do {
+      x = Math.floor(Math.random() * (floatingBg.offsetWidth - iconSize));
+      y = Math.floor(Math.random() * (floatingBg.offsetHeight - iconSize));
+      tries++;
+    } while (isOverlapping(x, y) && tries < 100);
+
+    icon.style.left = x + "px";
+    icon.style.top = y + "px";
+    icon.style.animationDuration = (10 + Math.random() * 10) + "s";
+
+    placedPositions.push({ x, y });
+    floatingBg.appendChild(icon);
+  }
+});
+</script>
+
+
+
+</body>
+</html>
