@@ -1,4 +1,6 @@
-// backend/server.js
+// index.js (or server.js)
+require('dotenv').config(); // Load environment variables
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -26,7 +28,8 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT // Important for Railway MySQL
 });
 
 db.connect(err => {
@@ -35,6 +38,7 @@ db.connect(err => {
 });
 
 // ------------------ Routes ------------------
+// Assuming you have these route files in backend/routes/
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/products");
 const dbRoutes = require("./routes/db");
@@ -71,7 +75,7 @@ app.post("/login", (req, res) => {
   });
 });
 
-// ------------------ Default Routes ------------------
+// ------------------ Frontend Routes ------------------
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
