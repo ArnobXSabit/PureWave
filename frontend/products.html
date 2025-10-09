@@ -284,6 +284,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 </a>
 
 <script>
+    const BASE_URL = "https://purewave.onrender.com";
+</script>
+
+<script>
 
   // ---------- Navbar Dropdown Search Toggle ----------
 const navbarSearchIcon = document.getElementById('navbarSearchIcon');
@@ -339,7 +343,7 @@ async function initSidebar() {
 
   async function loadSidebarCategories() {
     try {
-      const res = await fetch("http://localhost:3000/api/categories");
+      const res = await fetch(`${BASE_URL}/api/categories`);
       const categories = await res.json();
       const container = document.getElementById("sidebarCategories");
       container.innerHTML = "";
@@ -397,7 +401,7 @@ async function initSidebar() {
     const grid = document.getElementById("product-grid");
     grid.innerHTML = "";
 
-    const resCategories = await fetch("http://localhost:3000/api/categories");
+    const resCategories = await fetch(`${BASE_URL}/api/categories`);
     const categories = await resCategories.json();
     const categoryMap = {};
     categories.forEach(cat => {
@@ -430,7 +434,7 @@ async function initSidebar() {
     let displayIndex = 0;
 
     for(const catId of categoryIdsToFetch){
-        const res = await fetch(`http://localhost:3000/api/products?category_id=${catId}`);
+        const res = await fetch(`${BASE_URL}/api/products?category_id=${catId}`);
         const data = await res.json();
         if(!data.success) continue;
 
@@ -444,7 +448,7 @@ async function initSidebar() {
             else if(displayIndex % 3 === 1) card.classList.add("from-bottom");
             else card.classList.add("from-right");
 
-            const imgUrl = p.images?.[0] ?? 'http://localhost:3000/Products/default.jpg';
+            const imgUrl = p.images?.[0] ?? `${BASE_URL}/Products/default.jpg`;
             card.innerHTML = `<a href="viewProduct.html?id=${p.product_id}"><img src="${imgUrl}" alt="${p.name}" /></a><h3>${p.name}</h3><span>৳ ${p.price}</span>`;
             grid.appendChild(card);
             displayIndex++;
@@ -477,7 +481,7 @@ function updateCartCount() {
 let allCategories = [];
 async function loadAllCategories() {
   try { 
-    const res = await fetch("http://localhost:3000/api/categories"); 
+    const res = await fetch(`${BASE_URL}/api/categories`); 
     allCategories = await res.json(); 
   } catch(e) { console.error(e); }
 }
