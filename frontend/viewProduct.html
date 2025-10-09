@@ -265,6 +265,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 </a>
 
 <script>
+  const API_BASE = "https://purewave.onrender.com/api";
+</script> 
+
+<script>
 // ---------- Duplicate Navbar Hide on Scroll ----------
 const duplicateNavbar = document.getElementById('duplicateNavbar');
 let lastScroll = window.scrollY;
@@ -292,7 +296,7 @@ async function initSidebar() {
 
   async function loadSidebarCategories() {
     try {
-      const res = await fetch("http://localhost:3000/api/categories");
+      const res = await fetch(`${API_BASE}/categories`);
       const categories = await res.json();
       const container = document.getElementById("sidebarCategories");
       container.innerHTML = "";
@@ -329,16 +333,17 @@ async function initSidebar() {
 
   async function loadProducts() {
     const grid = document.getElementById("product-grid");
+    if(!grid) return;
     grid.innerHTML = "";
     if(selectedCategories.size === 0){ grid.innerHTML="<p>Please select a category.</p>"; return; }
     const added = new Set();
     for(const catId of selectedCategories){
-      const res = await fetch(`http://localhost:3000/api/products?category_id=${catId}`);
+      const res = await fetch(`${API_BASE}/products?category_id=${catId}`);
       const data = await res.json();
       if(!data.success) continue;
       data.products.forEach(p => {
         if(added.has(p.product_id)) return; added.add(p.product_id);
-        const imgUrl = p.images?.[0] ?? 'http://localhost:3000/Products/default.jpg';
+        const imgUrl = p.images?.[0] ?? `${API_BASE.replace('/api','')}/Products/default.jpg`;
         const card = document.createElement('div'); card.classList.add('product-card');
         card.innerHTML = `<a href="viewProduct.html?id=${p.product_id}"><img src="${imgUrl}" alt="${p.name}"></a><h3>${p.name}</h3><span>৳ ${p.price}</span>`;
         grid.appendChild(card);
@@ -362,8 +367,10 @@ function updateCartCount() {
 // ---------- Search Autocomplete ----------
 let allCategories = [];
 async function loadAllCategories() {
-  try{ const res = await fetch("http://localhost:3000/api/categories"); allCategories = await res.json(); }
-  catch(e){ console.error(e); }
+  try{ 
+    const res = await fetch(`${API_BASE}/categories`);
+    allCategories = await res.json(); 
+  } catch(e){ console.error(e); }
 }
 
 const searchInput = document.getElementById('searchInput');
@@ -411,14 +418,13 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   await loadAllCategories();
 });
 
-// -----------------------------------------------------------------------------
 // ---------- Product Loading ----------
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get("id");
 
 async function loadProduct() {
   try {
-    const res = await fetch(`http://localhost:3000/api/products`);
+    const res = await fetch(`${API_BASE}/products`);
     const data = await res.json();
     const products = data.products || [];
     const product = products.find(p => p.product_id == productId);
@@ -448,7 +454,7 @@ async function loadProduct() {
     const mainImage = document.createElement("img");
     mainImage.id = "main-product-image";
     mainImage.alt = product.name;
-    mainImage.src = product.images?.[0] ? (product.images[0].startsWith("http") ? product.images[0] : `http://localhost:3000/${product.images[0]}`) : "http://localhost:3000/Products/default.jpg";
+    mainImage.src = product.images?.[0] ? (product.images[0].startsWith("http") ? product.images[0] : `${API_BASE.replace('/api','')}/${product.images[0]}`) : `${API_BASE.replace('/api','')}/Products/default.jpg`;
     imageContainer.appendChild(mainImage);
 
     const thumbContainer = document.createElement("div");
@@ -458,7 +464,7 @@ async function loadProduct() {
     if(product.images && product.images.length){
       product.images.forEach((img,index)=>{
         const thumb = document.createElement("img");
-        thumb.src = img.startsWith("http") ? img : `http://localhost:3000/${img}`;
+        thumb.src = img.startsWith("http") ? img : `${API_BASE.replace('/api','')}/${img}`;
         thumb.alt = product.name;
         thumb.classList.add("thumbnail");
         if(index===0) thumb.classList.add("active");
@@ -510,12 +516,12 @@ document.getElementById("add-to-cart").addEventListener("click", async ()=>{
   const product_id = parseInt(productId);
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const token = user?.token; // ✅ fixed
+  const token = user?.token;
 
   if(token){
     // Logged-in: send to server
     try{
-      const res = await fetch("http://localhost:3000/api/cart",{
+      const res = await fetch(`${API_BASE}/cart`,{
         method:"POST",
         headers:{
           "Content-Type":"application/json",
