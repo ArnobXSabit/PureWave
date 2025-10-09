@@ -28,13 +28,14 @@ exports.getAllProducts = async (req, res) => {
 
       imagesRows.forEach(img => {
         if (!imagesMap[img.product_id]) imagesMap[img.product_id] = [];
-        imagesMap[img.product_id].push(`https://purewave.onrender.com/Products/${img.image_url}`);
+        // Prepend /Products/ to the image filename
+        imagesMap[img.product_id].push(`https://purewave.onrender.com/${img.image_url}`);
       });
     }
 
     const products = productsRows.map(p => ({
       ...p,
-      images: imagesMap[p.product_id] || [`https://purewave.onrender.com/Products/default.jpg`]
+      images: imagesMap[p.product_id] || [`https://purewave.onrender.com/default.jpg`]
     }));
 
     res.json({ success: true, products });
