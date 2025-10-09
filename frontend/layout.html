@@ -168,46 +168,40 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 </a>
 
 <script>
-const BACKEND_URL = "https://purewave.onrender.com"; 
+  const BACKEND_URL = "https://purewave.onrender.com"; 
 </script>
 
 <script>
-  // ------------------ Search and Autocomplete ------------------
-let allCategories=[];
-async function loadAllCategories(){
-  try{ const res=await fetch(`${BACKEND_URL}/api/categories`); allCategories=await res.json(); }catch(e){console.error(e);}
-}
+  // ------------------ Search and Dropdown ------------------
+  const searchForm = document.getElementById('searchForm');
+  const searchInput = document.getElementById('searchInput');
+  searchForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const query = searchInput.value.trim();
+    if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+  });
 
-// Normal search
-document.getElementById('searchForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const query=document.getElementById('searchInput').value.trim();
-  if(query) window.location.href=`products.html?search=${encodeURIComponent(query)}`;
-});
+  const navbarSearchIcon = document.getElementById('navbarSearchIcon');
+  const navbarSearchDropdown = document.getElementById('navbarSearchDropdown');
+  const navbarDropdownInput = document.getElementById('navbarDropdownInput');
+  const navbarDropdownForm = document.getElementById('navbarDropdownForm');
 
-// Dropdown search
-const navbarSearchIcon = document.getElementById('navbarSearchIcon');
-const navbarSearchDropdown = document.getElementById('navbarSearchDropdown');
-const navbarDropdownInput = document.getElementById('navbarDropdownInput');
-navbarSearchIcon.addEventListener('click', (e) => { e.stopPropagation(); navbarSearchDropdown.style.display = navbarSearchDropdown.style.display === 'block' ? 'none' : 'block'; if(navbarSearchDropdown.style.display === 'block') navbarDropdownInput.focus(); });
-document.addEventListener('click', (e) => { if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon) navbarSearchDropdown.style.display = 'none'; });
-document.getElementById('navbarDropdownForm').addEventListener('submit', (e) => { e.preventDefault(); const query = navbarDropdownInput.value.trim(); if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`; });
-
+  navbarSearchIcon.addEventListener('click', e => {
+    e.stopPropagation();
+    navbarSearchDropdown.style.display = navbarSearchDropdown.style.display === 'block' ? 'none' : 'block';
+    if(navbarSearchDropdown.style.display === 'block') navbarDropdownInput.focus();
+  });
+  document.addEventListener('click', e => {
+    if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon) navbarSearchDropdown.style.display = 'none';
+  });
+  navbarDropdownForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const query = navbarDropdownInput.value.trim();
+    if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+  });
 </script>
 
 <script>
-
-  // ------------------ Categories ------------------
-async function loadCategories(){
-  try{
-    const res = await fetch(`${BACKEND_URL}/api/categories`);
-    const categories = await res.json();
-    const container = document.getElementById("categoriesGrid");
-    if(container) container.innerHTML = "";
-    const categoryMap = {};
-    categories.forEach(cat => categoryMap[cat.category_id] = cat);
-  } catch(err){ console.error(err);}
-}
 
 // ------------------ Sidebar Toggle ------------------
 const sidebarToggle = document.getElementById('sidebarToggle');
@@ -226,50 +220,92 @@ function adjustSidebar() {
 window.addEventListener('load', adjustSidebar);
 window.addEventListener('resize', adjustSidebar);
 
-// Sidebar categories
-async function loadSidebarCategories(){
-  try{
+// ------------------ Sidebar Categories ------------------
+async function loadSidebarCategories() {
+  try {
     const res = await fetch(`${BACKEND_URL}/api/categories`);
-    const categories=await res.json();
-    const container=document.getElementById("sidebarCategories");
-    const map={};
-    categories.forEach(cat=>{ const parentId=cat.parent_id??0; if(!map[parentId]) map[parentId]=[]; map[parentId].push(cat); });
-    function createList(parentId, depth=0){
-      if(!map[parentId]) return null;
-      const ul=document.createElement('ul'); ul.style.paddingLeft=depth===0?'0':'14px'; ul.style.margin='6px 0';
-      map[parentId].forEach(cat=>{
-        const li=document.createElement('li');
-        const hasChildren=map[cat.category_id] && map[cat.category_id].length>0;
-        const flexRow=document.createElement('div'); flexRow.classList.add('flex-row');
-        const a=document.createElement('a'); a.textContent=cat.category_name;
-        if(!hasChildren) a.href=`products.html?category=${cat.category_id}`; else a.href="#";
-        if(depth===0) a.classList.add('grand'); else if(depth===1) a.classList.add('parent'); else a.classList.add('child');
+    const categories = await res.json();
+    const container = document.getElementById("sidebarCategories");
+    const map = {};
+    categories.forEach(cat => {
+      const parentId = cat.parent_id ?? 0;
+      if (!map[parentId]) map[parentId] = [];
+      map[parentId].push(cat);
+    });
+
+    function createList(parentId, depth = 0) {
+      if (!map[parentId]) return null;
+      const ul = document.createElement('ul');
+      ul.style.paddingLeft = depth === 0 ? '0' : '14px';
+      ul.style.margin = '6px 0';
+
+      map[parentId].forEach(cat => {
+        const li = document.createElement('li');
+        const hasChildren = map[cat.category_id] && map[cat.category_id].length > 0;
+        const flexRow = document.createElement('div');
+        flexRow.classList.add('flex-row');
+
+        const a = document.createElement('a');
+        a.textContent = cat.category_name;
+        a.href = hasChildren ? '#' : `products.html?category=${cat.category_id}`;
+        a.classList.add(depth === 0 ? 'grand' : depth === 1 ? 'parent' : 'child');
+
         flexRow.appendChild(a);
-        const childrenUl=createList(cat.category_id,depth+1);
-        if(childrenUl){
-          childrenUl.style.display='none';
-          const toggle=document.createElement('span'); toggle.textContent='+'; toggle.classList.add('toggle');
-          function toggleChildren(e){ e.stopPropagation(); childrenUl.style.display=childrenUl.style.display==='block'?'none':'block'; toggle.textContent=childrenUl.style.display==='block'?'−':'+'; }
-          toggle.addEventListener('click',toggleChildren);
-          a.addEventListener('click', e=>{ if(hasChildren){ e.preventDefault(); toggleChildren(e); }});
+
+        const childrenUl = createList(cat.category_id, depth + 1);
+        if (childrenUl) {
+          childrenUl.style.display = 'none';
+          const toggle = document.createElement('span');
+          toggle.textContent = '+';
+          toggle.classList.add('toggle');
+
+          function toggleChildren(e) {
+            e.stopPropagation();
+            childrenUl.style.display = childrenUl.style.display === 'block' ? 'none' : 'block';
+            toggle.textContent = childrenUl.style.display === 'block' ? '−' : '+';
+          }
+
+          toggle.addEventListener('click', toggleChildren);
+          a.addEventListener('click', e => {
+            if (hasChildren) {
+              e.preventDefault();
+              toggleChildren(e);
+            }
+          });
+
           flexRow.appendChild(toggle);
-          li.appendChild(flexRow); li.appendChild(childrenUl);
-        } else li.appendChild(flexRow);
+          li.appendChild(flexRow);
+          li.appendChild(childrenUl);
+        } else {
+          li.appendChild(flexRow);
+        }
+
         ul.appendChild(li);
       });
+
       return ul;
     }
-    const topUl=createList(0);
-    if(topUl) container.appendChild(topUl);
-  } catch(err){ console.error(err); }
+
+    const topUl = createList(0);
+    if (topUl) container.appendChild(topUl);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 // ------------------ Cart Count ------------------
-function updateCartCount(){
-  let cartItems=JSON.parse(localStorage.getItem('cart'))||[];
-  document.getElementById('cartCount').textContent=cartItems.length;
-  document.getElementById('navbarCartCount').textContent=cartItems.length;
-  document.getElementById('duplicateNavbarCartCount').textContent=cartItems.length;
+function updateCartCount() {
+  let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+  if (!Array.isArray(cartItems) && typeof cartItems === 'object') {
+    // cart as {id: qty, ...}
+    cartItems = Object.values(cartItems).reduce((sum, qty) => sum + qty, 0);
+  } else {
+    cartItems = cartItems.length;
+  }
+
+  document.getElementById('cartCount').textContent = cartItems;
+  document.getElementById('navbarCartCount').textContent = cartItems;
+  document.getElementById('duplicateNavbarCartCount').textContent = cartItems;
 }
 
 // ------------------ Duplicate navbar scroll hide ------------------
@@ -283,11 +319,9 @@ window.addEventListener('scroll', ()=>{
 });
 
 // ------------------ Initialize ------------------
-document.addEventListener("DOMContentLoaded", ()=>{
-  loadCategories();
+document.addEventListener("DOMContentLoaded", () => {
   loadSidebarCategories();
   updateCartCount();
-  loadAllCategories();
 });
 </script>
 
