@@ -152,23 +152,19 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   padding: 8px 12px;
   cursor: pointer;
 }
-</style>
 
-<!-----------------------FLOATING W BACKGROUND-------------->
-
-<style>
+/* ---------- Floating Background ---------- */
 #floatingBackground {
   position: absolute;
-  top: 100px; /* adjust to your navbar height */
+  top: 100px;
   left: 0;
   right: 0;
-  bottom: 0; /* stretch to bottom of page */
+  bottom: 0;
   width: 100%;
-  pointer-events: none; /* allow clicking through */
+  pointer-events: none;
   overflow: hidden;
-  z-index: 0; /* behind content */
+  z-index: 0;
 }
-
 .floating-icon {
   position: absolute;
   width: 60px;
@@ -176,7 +172,6 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   opacity: 0.1;
   animation: float 12s ease-in-out infinite;
 }
-
 @keyframes float {
   0%   { transform: translateY(0) translateX(0) rotate(0deg); }
   25%  { transform: translateY(-20px) translateX(10px) rotate(10deg); }
@@ -184,13 +179,6 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   75%  { transform: translateY(-10px) translateX(5px) rotate(5deg); }
   100% { transform: translateY(0) translateX(0) rotate(0deg); }
 }
-
-/* Example positions for multiple icons */
-#floatingBackground .icon1 { top: 50px; left: 10%; animation-duration: 14s; }
-#floatingBackground .icon2 { top: 200px; right: 15%; animation-duration: 18s; }
-#floatingBackground .icon3 { top: 400px; left: 30%; animation-duration: 20s; }
-/* Add more as needed */
-
 </style>
 </head>
 <body>
@@ -258,12 +246,12 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   </div>
 </header>
 
-    <!-- Floating Icons Background -->
-    <div id="floatingBackground"></div>
+<!-- Floating Icons Background -->
+<div id="floatingBackground"></div>
 
-  <main>
-    <!-----------------put main contents here---------------->
-  </main>
+<main>
+  <!-- Put main contents here -->
+</main>
 
 <footer>
   &copy; 2025 PureWave. All rights reserved.
@@ -281,40 +269,11 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 </a>
 
 <script>
-  const BACKEND_URL = "https://purewave.onrender.com"; // same origin, relative path
+const BACKEND_URL = "https://purewave.onrender.com"; 
 </script>
 
 <script>
-// ------------------ Search ------------------
-document.getElementById('searchForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const query=document.getElementById('searchInput').value.trim();
-  if(query) window.location.href=`products.html?search=${encodeURIComponent(query)}`;
-});
-
-const navbarSearchIcon = document.getElementById('navbarSearchIcon');
-const navbarSearchDropdown = document.getElementById('navbarSearchDropdown');
-const navbarDropdownInput = document.getElementById('navbarDropdownInput');
-
-navbarSearchIcon.addEventListener('click', (e) => {
-  e.stopPropagation();
-  navbarSearchDropdown.style.display = navbarSearchDropdown.style.display === 'block' ? 'none' : 'block';
-  if(navbarSearchDropdown.style.display === 'block') navbarDropdownInput.focus();
-});
-
-document.addEventListener('click', (e) => {
-  if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon){
-    navbarSearchDropdown.style.display = 'none';
-  }
-});
-
-document.getElementById('navbarDropdownForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const query = navbarDropdownInput.value.trim();
-  if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`;
-});
-
-// ------------------ Sidebar ------------------
+// ------------------ Sidebar Toggle ------------------
 const sidebarToggle = document.getElementById('sidebarToggle');
 const sidebarToggle2 = document.getElementById('sidebarToggle2');
 const sidebar = document.getElementById('sidebar');
@@ -323,7 +282,6 @@ sidebarToggle2.addEventListener('click', () => sidebar.classList.toggle('open'))
 document.addEventListener('click', e => {
   if(!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebarToggle2.contains(e.target)) sidebar.classList.remove('open');
 });
-
 function adjustSidebar() {
   const navHeight = document.querySelector('.navbar').offsetHeight;
   sidebar.style.top = navHeight + 'px';
@@ -338,44 +296,9 @@ async function loadCategories(){
     const res = await fetch(`${BACKEND_URL}/api/categories`);
     const categories = await res.json();
     const container = document.getElementById("categoriesGrid");
-    container.innerHTML = "";
+    if(container) container.innerHTML = "";
     const categoryMap = {};
     categories.forEach(cat => categoryMap[cat.category_id] = cat);
-    categories.filter(c => c.thumbnail && c.thumbnail.url).forEach((cat, index) => {
-      const card = document.createElement("div");
-      card.classList.add("category-card");
-      if(index % 3 === 0) card.classList.add("from-left");
-      else if(index % 3 === 1) card.classList.add("from-bottom");
-      else card.classList.add("from-right");
-      const parentName = cat.parent_id && categoryMap[cat.parent_id] 
-                        ? categoryMap[cat.parent_id].category_name 
-                        : cat.category_name;
-      card.innerHTML = `
-        <a href="products.html?category=${cat.category_id}" style="text-decoration:none;color:inherit;">
-          <div class="notch">${cat.category_name}</div>
-          <div class="parent-text" style="
-            position:absolute;
-            bottom:8px;
-            left:8px;
-            color:#fff;
-            font-size:1.1rem;
-            font-weight:600;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            z-index:3;
-          ">${parentName}</div>
-          <img src="${cat.thumbnail.url}" alt="${cat.category_name}" />
-        </a>
-      `;
-      container.appendChild(card);
-    });
-    document.querySelectorAll(".category-card").forEach(c => {
-      new IntersectionObserver(e => {
-        e.forEach(entry => {
-          if(entry.isIntersecting) entry.target.classList.add("show");
-          else entry.target.classList.remove("show");
-        });
-      }, {threshold:0.15}).observe(c)
-    });
   } catch(err){ console.error(err);}
 }
 
@@ -417,7 +340,7 @@ async function loadSidebarCategories(){
   } catch(err){ console.error(err); }
 }
 
-// Update cart counts
+// ------------------ Cart Count ------------------
 function updateCartCount(){
   let cartItems=JSON.parse(localStorage.getItem('cart'))||[];
   document.getElementById('cartCount').textContent=cartItems.length;
@@ -425,7 +348,7 @@ function updateCartCount(){
   document.getElementById('duplicateNavbarCartCount').textContent=cartItems.length;
 }
 
-// Duplicate navbar scroll hide
+// ------------------ Duplicate navbar scroll hide ------------------
 const duplicateNavbar=document.getElementById('duplicateNavbar');
 let lastScroll=window.scrollY;
 window.addEventListener('scroll', ()=>{
@@ -435,196 +358,51 @@ window.addEventListener('scroll', ()=>{
   lastScroll=currentScroll;
 });
 
-// Hide dropdown search when scrolling up, keep when scrolling down
-let lastScrollPos = window.scrollY;
-
-window.addEventListener('scroll', () => {
-  const currentScroll = window.scrollY;
-
-  if (currentScroll < lastScrollPos) {
-    // Scrolling up → hide dropdown
-    if (navbarSearchDropdown.style.display === 'block') {
-      navbarSearchDropdown.style.display = 'none';
-      closeDropdownAutocomplete();
-    }
-  }
-  // Scrolling down → do nothing (keep open)
-
-  lastScrollPos = currentScroll;
-});
-
-
-// Autocomplete for search
-let allCategories = [];
-async function loadAllCategories() {
-  try {
-const res = await fetch(`${BACKEND_URL}/api/categories`);
-    allCategories = await res.json();
-  } catch (err) { console.error(err); }
+// ------------------ Search and Autocomplete ------------------
+let allCategories=[];
+async function loadAllCategories(){
+  try{ const res=await fetch(`${BACKEND_URL}/api/categories`); allCategories=await res.json(); }catch(e){console.error(e);}
 }
 
-const searchInput = document.getElementById('searchInput');
-let currentFocus = -1;
-
-searchInput.addEventListener('input', function() {
-  closeAutocomplete();
-  if(!this.value) return;
-  const val = this.value.toLowerCase();
-  const matches = allCategories.filter(c => c.category_name.toLowerCase().includes(val));
-  if(matches.length === 0) return;
-  const list = document.createElement('div');
-  list.setAttribute('id', 'autocomplete-list');
-  matches.forEach(cat => {
-    const item = document.createElement('div');
-    item.textContent = cat.category_name;
-    item.addEventListener('click', () => {
-      window.location.href = `products.html?category=${cat.category_id}`;
-    });
-    list.appendChild(item);
-  });
-  this.parentNode.appendChild(list);
+// Normal search
+document.getElementById('searchForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const query=document.getElementById('searchInput').value.trim();
+  if(query) window.location.href=`products.html?search=${encodeURIComponent(query)}`;
 });
 
-searchInput.addEventListener('keydown', function(e) {
-  let list = document.getElementById('autocomplete-list');
-  if(list) list = list.getElementsByTagName('div');
-  if(!list) return;
-  if(e.key === "ArrowDown") { currentFocus++; addActive(list); }
-  else if(e.key === "ArrowUp") { currentFocus--; addActive(list); }
-  else if(e.key === "Enter") { e.preventDefault(); if(currentFocus > -1) list[currentFocus].click(); }
+// Dropdown search
+const navbarSearchIcon = document.getElementById('navbarSearchIcon');
+const navbarSearchDropdown = document.getElementById('navbarSearchDropdown');
+const navbarDropdownInput = document.getElementById('navbarDropdownInput');
+navbarSearchIcon.addEventListener('click', (e) => { e.stopPropagation(); navbarSearchDropdown.style.display = navbarSearchDropdown.style.display === 'block' ? 'none' : 'block'; if(navbarSearchDropdown.style.display === 'block') navbarDropdownInput.focus(); });
+document.addEventListener('click', (e) => { if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon) navbarSearchDropdown.style.display = 'none'; });
+document.getElementById('navbarDropdownForm').addEventListener('submit', (e) => { e.preventDefault(); const query = navbarDropdownInput.value.trim(); if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`; });
+
+// ------------------ Floating Background ------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const floatingBg = document.getElementById("floatingBackground");
+  const iconCount = 200;
+  const iconSize = 60;
+  const gap = 10;
+  const cols = Math.floor(floatingBg.offsetWidth / (iconSize + gap));
+  const rows = Math.floor(floatingBg.offsetHeight / (iconSize + gap));
+  const positions = [];
+  for (let r = 0; r < rows; r++){ for (let c = 0; c < cols; c++){ positions.push({x: c*(iconSize+gap), y: r*(iconSize+gap)}); } }
+  positions.sort(() => 0.5 - Math.random());
+  for(let i=0;i<Math.min(iconCount, positions.length);i++){
+    const pos=positions[i]; const icon=document.createElement("img"); icon.src="w-icon.svg"; icon.classList.add("floating-icon");
+    icon.style.left=pos.x+"px"; icon.style.top=pos.y+"px"; icon.style.animationDuration=(10+Math.random()*10)+"s"; icon.style.animationDelay=Math.random()*10+"s";
+    floatingBg.appendChild(icon);
+  }
 });
 
-function addActive(list) { if(!list) return false; removeActive(list); if(currentFocus >= list.length) currentFocus = 0; if(currentFocus < 0) currentFocus = list.length - 1; list[currentFocus].classList.add("autocomplete-active"); }
-function removeActive(list) { for(let i=0;i<list.length;i++) list[i].classList.remove("autocomplete-active"); }
-function closeAutocomplete() { const list = document.getElementById('autocomplete-list'); if(list) list.parentNode.removeChild(list); currentFocus = -1; }
-document.addEventListener('click', function(e) { if(e.target !== searchInput) closeAutocomplete(); });
-
-// Initialize
+// ------------------ Initialize ------------------
 document.addEventListener("DOMContentLoaded", ()=>{
   loadCategories();
   loadSidebarCategories();
   updateCartCount();
   loadAllCategories();
-});
-</script>
-
-<script>
-// ---------- Autocomplete for Dropdown Search ----------
-const dropdownInput = document.getElementById('navbarDropdownInput');
-let dropdownFocus = -1;
-
-dropdownInput.addEventListener('input', function() {
-  closeDropdownAutocomplete();
-  if (!this.value) return;
-  const val = this.value.toLowerCase();
-  const matches = allCategories.filter(c => c.category_name.toLowerCase().includes(val));
-  if (matches.length === 0) return;
-  
-  const list = document.createElement('div');
-  list.setAttribute('id', 'dropdown-autocomplete-list');
-  list.style.position = 'absolute';
-  list.style.background = '#fff';
-  list.style.border = '1px solid #ccc';
-  list.style.width = '100%';
-  list.style.top = '38px';
-  list.style.left = '0';
-  list.style.maxHeight = '200px';
-  list.style.overflowY = 'auto';
-  list.style.zIndex = '1000';
-  list.style.borderRadius = '0 0 8px 8px';
-
-  matches.forEach(cat => {
-    const item = document.createElement('div');
-    item.textContent = cat.category_name;
-    item.style.padding = '8px 12px';
-    item.style.cursor = 'pointer';
-    item.addEventListener('click', () => {
-      window.location.href = `products.html?category=${cat.category_id}`;
-    });
-    list.appendChild(item);
-  });
-
-  this.parentNode.appendChild(list);
-});
-
-dropdownInput.addEventListener('keydown', function(e) {
-  let list = document.getElementById('dropdown-autocomplete-list');
-  if (list) list = list.getElementsByTagName('div');
-  if (!list) return;
-  if (e.key === "ArrowDown") { dropdownFocus++; addDropdownActive(list); }
-  else if (e.key === "ArrowUp") { dropdownFocus--; addDropdownActive(list); }
-  else if (e.key === "Enter") { e.preventDefault(); if (dropdownFocus > -1) list[dropdownFocus].click(); }
-});
-
-function addDropdownActive(list) {
-  if (!list) return false;
-  removeDropdownActive(list);
-  if (dropdownFocus >= list.length) dropdownFocus = 0;
-  if (dropdownFocus < 0) dropdownFocus = list.length - 1;
-  list[dropdownFocus].classList.add("autocomplete-active");
-}
-
-function removeDropdownActive(list) {
-  for (let i = 0; i < list.length; i++) list[i].classList.remove("autocomplete-active");
-}
-
-function closeDropdownAutocomplete() {
-  const list = document.getElementById('dropdown-autocomplete-list');
-  if (list) list.parentNode.removeChild(list);
-  dropdownFocus = -1;
-}
-
-document.addEventListener('click', function(e) {
-  if (e.target !== dropdownInput) closeDropdownAutocomplete();
-});
-
-// Load categories once
-loadAllCategories();
-</script>
-
-
-<!-----------------------FLOATING W BACKGROUND-------------->
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const floatingBg = document.getElementById("floatingBackground");
-  const iconCount = 200; // total number of icons
-  const iconSize = 60; // width & height of each icon in px
-  const gap = 10; // minimum gap between icons
-
-  // Calculate number of columns and rows
-  const cols = Math.floor(floatingBg.offsetWidth / (iconSize + gap));
-  const rows = Math.floor(floatingBg.offsetHeight / (iconSize + gap));
-
-  // Create all possible grid positions
-  const positions = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      positions.push({
-        x: c * (iconSize + gap),
-        y: r * (iconSize + gap)
-      });
-    }
-  }
-
-  // Shuffle positions randomly
-  positions.sort(() => 0.5 - Math.random());
-
-  // Place icons in shuffled positions
-  for (let i = 0; i < Math.min(iconCount, positions.length); i++) {
-    const pos = positions[i];
-    const icon = document.createElement("img");
-    icon.src = "w-icon.svg"; // your icon
-    icon.classList.add("floating-icon");
-    icon.style.left = pos.x + "px";
-    icon.style.top = pos.y + "px";
-
-    // Random animation duration & delay for floating effect
-    icon.style.animationDuration = (10 + Math.random() * 10) + "s";
-    icon.style.animationDelay = Math.random() * 10 + "s";
-
-    floatingBg.appendChild(icon);
-  }
 });
 </script>
 </body>
