@@ -419,24 +419,24 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
 <script>
 const floatingBg = document.getElementById('floatingBackground');
-const ICON_COUNT = 200;
-const ICON_SIZE = 60; // width & height
+const ICON_COUNT = 200; // reduce a bit for performance
+const ICON_SIZE = 60;
 const icons = [];
 
-// Check if a new icon position overlaps with existing ones
+// Check for overlapping positions
 function isOverlapping(x, y, existingIcons) {
   for (let icon of existingIcons) {
     const dx = x - icon.dataset.x;
     const dy = y - icon.dataset.y;
     const distance = Math.sqrt(dx*dx + dy*dy);
-    if (distance < ICON_SIZE + 10) return true; // minimum spacing
+    if (distance < ICON_SIZE + 10) return true;
   }
   return false;
 }
 
-// Create icons without overlapping
+// Create icons at random non-overlapping positions
 function createFloatingIcons() {
-  floatingBg.innerHTML = ''; // clear existing
+  floatingBg.innerHTML = '';
   icons.length = 0;
 
   const vw = window.innerWidth;
@@ -446,14 +446,14 @@ function createFloatingIcons() {
     const icon = document.createElement('img');
     icon.src = 'w-icon.svg'; // your icon path
     icon.className = 'floating-icon';
+    icon.style.opacity = 0;
 
-    // Find a non-overlapping position
     let x, y, attempts = 0;
     do {
       x = Math.random() * (vw - ICON_SIZE);
       y = Math.random() * (vh - ICON_SIZE);
       attempts++;
-      if (attempts > 100) break; // fallback
+      if (attempts > 100) break;
     } while (isOverlapping(x, y, icons));
 
     icon.dataset.x = x;
@@ -463,17 +463,40 @@ function createFloatingIcons() {
 
     floatingBg.appendChild(icon);
     icons.push(icon);
+
+    // Random fade in/out animation
+    randomFade(icon);
   }
 }
 
-// Scroll parallax & recycle icons
+// Random fade animation
+function randomFade(icon) {
+  const fadeInTime = 500 + Math.random() * 1500;
+  const visibleTime = 1000 + Math.random() * 3000;
+  const fadeOutTime = 500 + Math.random() * 1500;
+
+  setTimeout(() => {
+    icon.style.transition = `opacity ${fadeInTime}ms ease-in`;
+    icon.style.opacity = 0.1; // visible opacity
+
+    setTimeout(() => {
+      icon.style.transition = `opacity ${fadeOutTime}ms ease-out`;
+      icon.style.opacity = 0;
+
+      // Repeat after random delay
+      setTimeout(() => randomFade(icon), Math.random() * 5000);
+    }, visibleTime);
+  }, Math.random() * 5000); // initial random delay
+}
+
+// Parallax scroll & recycle icons
 function updateIconsOnScroll() {
   const scrollY = window.scrollY;
   const vh = window.innerHeight;
 
   icons.forEach(icon => {
-    let y = parseFloat(icon.dataset.y) - scrollY * 0.2; // slower parallax
-    if (y < -ICON_SIZE) { // recycle from bottom
+    let y = parseFloat(icon.dataset.y) - scrollY * 0.2;
+    if (y < -ICON_SIZE) {
       y = vh + Math.random() * 100;
       icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
       icon.dataset.y = y;
@@ -483,7 +506,7 @@ function updateIconsOnScroll() {
   });
 }
 
-// Recreate on resize
+// Recreate icons on resize
 function handleResize() {
   createFloatingIcons();
   updateIconsOnScroll();
@@ -494,7 +517,6 @@ window.addEventListener('scroll', updateIconsOnScroll);
 window.addEventListener('resize', handleResize);
 
 </script>
-
 </body>
 </html>
 
