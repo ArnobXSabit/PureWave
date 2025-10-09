@@ -1,9 +1,0 @@
-<script>
-    // ------------------ Load Categories ------------------
-async function loadAllCategories() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/categories`);
-    allCategories = await res.json();
-  } catch(err) { console.error(err); }
-}
-</script>
