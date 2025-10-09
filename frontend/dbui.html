@@ -174,7 +174,9 @@ table tr:hover { background:#e6f0ff; }
 <div id="toast" class="toast"></div>
 
 <script>
-const API_URL = 'http://localhost:3000/api/db';
+const BASE_URL = "https://purewave.onrender.com/api/db"; // Global API base URL
+</script>
+  <script>
 const autoColumns = ['created_at','updated_at','added_at','last_login','login_count','current_stock','earned_at','redeemed_at','order_date','payment_date','activity_time','processed_at','requested_at','force_reset'];
 
 let tableColumns = {};
@@ -192,7 +194,7 @@ function showToast(message, duration=2000){
 // ================= Sidebar =================
 async function loadSidebar(){
   try{
-    const res = await fetch(`${API_URL}/schema/tables`);
+    const res = await fetch(`${BASE_URL}/schema/tables`);
     const data = await res.json();
     if(!data.success) throw new Error('Failed to fetch tables');
     const sidebar = document.getElementById('sidebar');
@@ -211,7 +213,7 @@ async function loadTable(tableName){
   currentTable = tableName;
   document.getElementById('tableTitle').innerText = tableName.charAt(0).toUpperCase()+tableName.slice(1);
   try{
-    const res = await fetch(`${API_URL}/schema/columns/${tableName}`);
+    const res = await fetch(`${BASE_URL}/schema/columns/${tableName}`);
     const data = await res.json();
     if(!data.success) throw new Error('Failed to fetch columns');
 
@@ -257,7 +259,7 @@ function buildTableHeader(){
 // ================= Fetch Data =================
 async function fetchData(){
   try{
-    const res = await fetch(`${API_URL}/${currentTable}`);
+    const res = await fetch(`${BASE_URL}/${currentTable}`);
     const data = await res.json();
     const cols = tableColumns[currentTable];
     const tbody = document.getElementById('tableBody');
@@ -265,7 +267,7 @@ async function fetchData(){
 
     let imagesData=[];
     if(currentTable==='products'){
-      const imgRes = await fetch(`${API_URL}/images`);
+      const imgRes = await fetch(`${BASE_URL}/images`);
       imagesData = await imgRes.json();
     }
 
@@ -324,9 +326,9 @@ async function openModal(mode, id = null) {
 
   let recordData = {};
   if (mode === 'edit') {
-    const res = await fetch(`${API_URL}/${currentTable}`);
+    const res = await fetch(`${BASE_URL}/${currentTable}`);
     const data = await res.json();
-    recordData = data.find(r => r[cols[0]] == id) || {}; // ✅ Fix here
+    recordData = data.find(r => r[cols[0]] == id) || {};
   }
 
   for (const col of cols) {
@@ -334,7 +336,7 @@ async function openModal(mode, id = null) {
     if (autoColumns.includes(col)) continue;
 
     if (col === 'parent_id' && currentTable === 'categories') {
-      const res = await fetch(`${API_URL}/categories`);
+      const res = await fetch(`${BASE_URL}/categories`);
       const categories = await res.json();
       const categoryOptions = categories.filter(c => c.category_id !== editId);
       const options = [{ category_id: null, category_name: '-- None (Grandparent) --' }, ...categoryOptions];
@@ -353,13 +355,12 @@ async function openModal(mode, id = null) {
         <input type="password" name="confirm_password" placeholder="${mode==='edit'?'Leave blank to keep current password':''}">`;
     }
     else {
-      formFields.innerHTML += `<label>${col}</label><input type="text" name="${col}" value="${recordData[col] ?? ''}">`; // ✅ previous data shown
+      formFields.innerHTML += `<label>${col}</label><input type="text" name="${col}" value="${recordData[col] ?? ''}">`;
     }
   }
 
   modal.style.display = 'flex';
 }
-
 
 function closeModal(){
   document.getElementById('recordModal').style.display='none';
@@ -374,15 +375,10 @@ document.getElementById('recordForm').addEventListener('submit', async e=>{
   const form=e.target;
   const formData={};
   for(let [key,value] of new FormData(form).entries()){
-  if(key==='password_hash' && value==='' && editId) continue;
-
-  // Convert empty string to null for numeric fields like parent_id
-  if(key === 'parent_id' && value === '') {
-    formData[key] = null;
-  } else {
-    formData[key] = value;
+    if(key==='password_hash' && value==='' && editId) continue;
+    if(key === 'parent_id' && value === '') formData[key] = null;
+    else formData[key] = value;
   }
-}
 
   if(formData['password_hash'] && formData['password_hash']!==formData['confirm_password']){
     showToast('Password and Confirm Password do not match!');
@@ -397,13 +393,13 @@ document.getElementById('recordForm').addEventListener('submit', async e=>{
   try{
     let res;
     if(editId){
-      res=await fetch(`${API_URL}/${currentTable}/${editId}`,{
+      res=await fetch(`${BASE_URL}/${currentTable}/${editId}`,{
         method:'PUT',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(formData)
       });
     }else{
-      res=await fetch(`${API_URL}/${currentTable}`,{
+      res=await fetch(`${BASE_URL}/${currentTable}`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(formData)
@@ -426,7 +422,7 @@ document.getElementById('deleteYes').addEventListener('click', async ()=>{
   if(!deleteId) return;
   document.getElementById('deleteConfirmBox').classList.remove('show');
   try{
-    const res=await fetch(`${API_URL}/${currentTable}/${deleteId}`,{method:'DELETE'});
+    const res=await fetch(`${BASE_URL}/${currentTable}/${deleteId}`,{method:'DELETE'});
     const result=await res.json();
     showToast(result.message || 'Deleted');
     fetchData();
@@ -443,5 +439,6 @@ document.getElementById('deleteCancel').addEventListener('click', ()=>{
 loadSidebar();
 function refreshPage(){ location.reload(); }
 </script>
+
 </body>
 </html>
