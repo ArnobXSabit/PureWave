@@ -77,10 +77,9 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   100% { transform: translateY(0) translateX(0) rotate(0deg); }
 }
 
-/* ---------- Unified Search UI ---------- */
-.search-wrapper { flex:1; display:flex; justify-content:center; align-items:center; position:relative; }
-
-.search-wrapper input[type="text"] {
+/* Center search bar */
+.nav-center { flex:1; display:flex; justify-content:center; align-items:center; position:relative; }
+.nav-center input[type="text"] {
   width:100%;
   max-width:300px;
   padding:8px 12px;
@@ -88,7 +87,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   border-radius:24px 0 0 24px;
   outline:none;
 }
-.search-wrapper button {
+.nav-center button {
   padding:8px 16px;
   border:none;
   background:#000;
@@ -97,7 +96,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   cursor:pointer;
   transition: background 0.3s;
 }
-.search-wrapper button:hover { background: #333; }
+.nav-center button:hover { background:#333; }
 
 /* Autocomplete dropdown */
 .autocomplete-items {
@@ -147,7 +146,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
       </a>
     </div>
     <div class="nav-center">
-      <form id="searchForm" class="search-wrapper">
+      <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
         <input type="text" id="searchInput" placeholder="Search products...">
         <button type="submit"><i class="fas fa-search"></i></button>
       </form>
@@ -185,16 +184,17 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
       <a href="userprofile.html" title="Profile"><i class="fas fa-user"></i></a>
     </nav>
 
-    <!-- Dropdown Search Bar -->
+    <!-- Dropdown Search Bar (styled same as duplicate navbar) -->
     <div id="navbarSearchDropdown" style="display:none;">
-      <form id="navbarDropdownForm" class="search-wrapper">
-        <input type="text" id="navbarDropdownInput" placeholder="Search products...">
-        <button type="submit"><i class="fas fa-search"></i></button>
-      </form>
+      <div class="nav-center">
+        <form id="navbarDropdownForm" style="display:flex; width:100%; max-width:400px; position:relative;">
+          <input type="text" id="navbarDropdownInput" placeholder="Search products...">
+          <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+      </div>
     </div>
   </div>
 </header>
-
 <!-- Floating Icons Background -->
 <div id="floatingBackground"></div>
 
