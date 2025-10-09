@@ -211,14 +211,18 @@ body {
 </footer>
 
 <script>
+const BASE_URL = "https://purewave.onrender.com"; // global API base URL
+</script>
+
+<script>
 const signupForm = document.getElementById("signupForm");
 
-function showToast(message, duration = 3000) {
+function showToast(message, type = "success", duration = 3000) {
     const toast = document.getElementById("toast");
     toast.textContent = message;
-    toast.classList.add("show");
+    toast.className = `toast show ${type}`;
     setTimeout(() => {
-        toast.classList.remove("show");
+        toast.className = "toast";
     }, duration);
 }
 
@@ -233,12 +237,12 @@ signupForm.addEventListener("submit", async (e) => {
   const confirmPassword = document.getElementById("confirm-password").value;
 
   if(password !== confirmPassword){
-    showToast("Passwords do not match!", 2500);
+    showToast("Passwords do not match!", "error", 2500);
     return;
   }
 
   try {
-    const res = await fetch("http://localhost:3000/auth/signup", {
+    const res = await fetch(`${BASE_URL}/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fullname, email, phone, password })
@@ -248,20 +252,21 @@ signupForm.addEventListener("submit", async (e) => {
 
     if(data.success){
         signupForm.reset();
-        showToast(data.message || "Signup successful!", 2000);
+        showToast(data.message || "Signup successful!", "success", 2000);
         setTimeout(() => {
             window.location.href = "./login.html";
         }, 2200);
     } else {
-        showToast(data.message || "Signup failed. Try again.", 2500);
+        showToast(data.message || "Signup failed. Try again.", "error", 2500);
     }
 
   } catch(err) {
     console.error("Signup error:", err);
-    showToast("Something went wrong. Please try again.", 2500);
+    showToast("Something went wrong. Please try again.", "warning", 2500);
   }
 });
 </script>
+
 
 </body>
 </html>
