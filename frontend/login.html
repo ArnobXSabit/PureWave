@@ -127,7 +127,7 @@
       <h1 class="logo">PureWave</h1>
       <nav class="nav-links">
         <a href="index.html">Home</a>
-        <a href="shopNow.html">Shop</a>
+        <a href="products.html">Shop</a>
         <a href="cart.html">Cart</a>
       </nav>
     </div>
@@ -168,16 +168,18 @@
     </div>
   </footer>
 
-  <script>
-    const loginMessage = document.getElementById("loginMessage");
+<script>
+const BASE_URL = "https://purewave.onrender.com"; // Global API base URL
+const loginMessage = document.getElementById("loginMessage");
 
+// ---------- Login Form ----------
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   try {
-    const res = await fetch("http://localhost:3000/auth/login", {
+    const res = await fetch(`${BASE_URL}/auth/login`, {  // <- global BASE_URL used here
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -205,28 +207,29 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   }
 });
 
+// ---------- Admin secret login (3-click logo) ----------
+let logoClickCount = 0;
+const logo = document.querySelector(".logo");
+logo.addEventListener("click", () => {
+  logoClickCount++;
+  setTimeout(() => { logoClickCount = 0; }, 1000);
+  if (logoClickCount === 3) window.location.href = "loginAdmin.html";
+});
 
-    // Admin secret login (3-click logo)
-    let logoClickCount = 0;
-    const logo = document.querySelector(".logo");
-    logo.addEventListener("click", () => {
-      logoClickCount++;
-      setTimeout(() => { logoClickCount = 0; }, 1000);
-      if (logoClickCount === 3) window.location.href = "loginAdmin.html";
-    });
+// ---------- Footer link triggers admin login ----------
+document.getElementById("palestineLink").addEventListener("click", () => {
+  window.location.href = "loginAdmin.html";
+});
 
-    // Footer link triggers admin login
-    document.getElementById("palestineLink").addEventListener("click", () => {
-      window.location.href = "loginAdmin.html";
-    });
-    function showToast(message, type = "success", duration = 3000) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.className = "toast show " + type; // add type for color
-    setTimeout(() => { toast.className = "toast"; }, duration);
-  }
+// ---------- Toast Function ----------
+function showToast(message, type = "success", duration = 3000) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.className = "toast show " + type; // Add type for color
+  setTimeout(() => { toast.className = "toast"; }, duration);
+}
+</script>
 
-  </script>
 
 </body>
 </html>
