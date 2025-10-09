@@ -57,7 +57,17 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 #floatingCart span { position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff0000; color:#fff; font-size:0.75rem; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; }
 
 /* ---------- Floating Background ---------- */
-#floatingBackground {position: absolute;top: 100px;left: 0;right: 0;bottom: 0;width: 100%;pointer-events: none;overflow: hidden;z-index: 0;}
+#floatingBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
 .floating-icon {position: absolute;width: 60px;height: 60px;opacity: 0.1;animation: float 12s ease-in-out infinite;}
 @keyframes float {
   0%   { transform: translateY(0) translateX(0) rotate(0deg); }
@@ -332,24 +342,6 @@ window.addEventListener('scroll',()=>{
   lastScroll=current;
 });
 
-// Floating background icons
-function createFloatingIcons(){
-  const bg=document.getElementById('floatingBackground');
-  const count=200, size=60, gap=10;
-  const cols=Math.floor(bg.offsetWidth/(size+gap));
-  const rows=Math.floor(bg.offsetHeight/(size+gap));
-  const pos=[];
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) pos.push({x:c*(size+gap),y:r*(size+gap)});
-  pos.sort(()=>0.5-Math.random());
-  for(let i=0;i<Math.min(count,pos.length);i++){
-    const icon=document.createElement('img'); icon.src='w-icon.svg'; icon.className='floating-icon';
-    icon.style.left=pos[i].x+'px'; icon.style.top=pos[i].y+'px';
-    icon.style.animationDuration=(10+Math.random()*10)+'s';
-    icon.style.animationDelay=Math.random()*10+'s';
-    bg.appendChild(icon);
-  }
-}
-
 // ---------- Autocomplete ----------
 function setupAutocomplete(input){
   let currentFocus=-1; let list;
@@ -401,6 +393,47 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   searchIcon.addEventListener('click', e=>{ e.stopPropagation(); dropdown.style.display=dropdown.style.display==='block'?'none':'block'; dropdown.querySelector('input').focus(); });
   document.addEventListener('click', e=>{ if(!dropdown.contains(e.target)&&e.target!==searchIcon) dropdown.style.display='none'; });
 });
+</script>
+
+<script>
+  // Floating background icons
+
+// ------------------ Floating Background ------------------
+function adjustFloatingBackground() {
+  const navbarHeight = document.querySelector('.navbar').offsetHeight;
+  const footer = document.querySelector('footer');
+  const bg = document.getElementById('floatingBackground');
+  const footerTop = footer.getBoundingClientRect().top + window.scrollY;
+  bg.style.top = navbarHeight + 'px';
+  bg.style.height = (footerTop - navbarHeight) + 'px';
+}
+
+function createFloatingIcons(){
+  const bg = document.getElementById('floatingBackground');
+  bg.innerHTML = ''; // clear existing icons
+  adjustFloatingBackground();
+  const bgHeight = bg.offsetHeight;
+  const bgWidth = bg.offsetWidth;
+  const count = 200, size = 60, gap = 10;
+  const cols = Math.floor(bgWidth / (size + gap));
+  const rows = Math.floor(bgHeight / (size + gap));
+  const pos = [];
+  for(let r=0; r<rows; r++) for(let c=0; c<cols; c++) pos.push({x:c*(size+gap), y:r*(size+gap)});
+  pos.sort(()=>0.5-Math.random());
+  for(let i=0; i<Math.min(count,pos.length); i++){
+    const icon = document.createElement('img');
+    icon.src = 'w-icon.svg';
+    icon.className = 'floating-icon';
+    icon.style.left = pos[i].x + 'px';
+    icon.style.top = pos[i].y + 'px';
+    icon.style.animationDuration = (10+Math.random()*10)+'s';
+    icon.style.animationDelay = Math.random()*10+'s';
+    bg.appendChild(icon);
+  }
+}
+
+window.addEventListener('load', createFloatingIcons);
+window.addEventListener('resize', createFloatingIcons);
 </script>
 
 </body>
