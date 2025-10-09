@@ -419,40 +419,63 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
 <script>
 const floatingBg = document.getElementById('floatingBackground');
-const iconCount = 200;
+const ICON_COUNT = 200;
+const ICON_SIZE = 60; // width & height
 const icons = [];
 
-function createInitialIcons() {
+// Check if a new icon position overlaps with existing ones
+function isOverlapping(x, y, existingIcons) {
+  for (let icon of existingIcons) {
+    const dx = x - icon.dataset.x;
+    const dy = y - icon.dataset.y;
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    if (distance < ICON_SIZE + 10) return true; // minimum spacing
+  }
+  return false;
+}
+
+// Create icons without overlapping
+function createFloatingIcons() {
+  floatingBg.innerHTML = ''; // clear existing
+  icons.length = 0;
+
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  for (let i = 0; i < iconCount; i++) {
+  for (let i = 0; i < ICON_COUNT; i++) {
     const icon = document.createElement('img');
-    icon.src = 'w-icon.svg';
+    icon.src = 'w-icon.svg'; // your icon path
     icon.className = 'floating-icon';
-    
-    // Random initial position in viewport
-    icon.dataset.x = Math.random() * vw;
-    icon.dataset.y = Math.random() * vh;
-    icon.style.left = icon.dataset.x + 'px';
-    icon.style.top = icon.dataset.y + 'px';
+
+    // Find a non-overlapping position
+    let x, y, attempts = 0;
+    do {
+      x = Math.random() * (vw - ICON_SIZE);
+      y = Math.random() * (vh - ICON_SIZE);
+      attempts++;
+      if (attempts > 100) break; // fallback
+    } while (isOverlapping(x, y, icons));
+
+    icon.dataset.x = x;
+    icon.dataset.y = y;
+    icon.style.left = x + 'px';
+    icon.style.top = y + 'px';
 
     floatingBg.appendChild(icon);
     icons.push(icon);
   }
 }
 
-// Update icon positions on scroll
+// Scroll parallax & recycle icons
 function updateIconsOnScroll() {
   const scrollY = window.scrollY;
   const vh = window.innerHeight;
-  const vw = window.innerWidth;
 
   icons.forEach(icon => {
-    let y = parseFloat(icon.dataset.y) - scrollY * 0.2; // slower parallax effect
-    if (y < -60) { // if icon moves above viewport, recycle to bottom
+    let y = parseFloat(icon.dataset.y) - scrollY * 0.2; // slower parallax
+    if (y < -ICON_SIZE) { // recycle from bottom
       y = vh + Math.random() * 100;
-      icon.dataset.x = Math.random() * vw;
+      icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
       icon.dataset.y = y;
       icon.style.left = icon.dataset.x + 'px';
     }
@@ -460,19 +483,17 @@ function updateIconsOnScroll() {
   });
 }
 
-window.addEventListener('load', createInitialIcons);
+// Recreate on resize
+function handleResize() {
+  createFloatingIcons();
+  updateIconsOnScroll();
+}
+
+window.addEventListener('load', createFloatingIcons);
 window.addEventListener('scroll', updateIconsOnScroll);
-window.addEventListener('resize', () => {
-  // Recalculate icon X positions to stay within viewport
-  const vw = window.innerWidth;
-  icons.forEach(icon => {
-    icon.dataset.x = Math.random() * vw;
-    icon.style.left = icon.dataset.x + 'px';
-  });
-});
+window.addEventListener('resize', handleResize);
+
 </script>
-
-
 
 </body>
 </html>
