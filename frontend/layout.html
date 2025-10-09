@@ -58,11 +58,11 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 
 /* ---------- Floating Background ---------- */
 #floatingBackground {
-  position: absolute;
-  top: 0;
+  position: fixed;        /* FIXED instead of absolute */
+  top: 100px;             /* will be dynamically updated */
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 0;              /* stretches to bottom of viewport */
   pointer-events: none;
   overflow: hidden;
   z-index: 0;
@@ -395,25 +395,85 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 });
 </script>
 
+<style>
+#floatingBackground {
+  position: fixed; /* relative to viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.floating-icon {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  opacity: 0.1;
+  transition: transform 0.1s linear;
+}
+</style>
+
+<div id="floatingBackground"></div>
+
 <script>
-  // Floating background icons
-function createFloatingIcons(){
-  const bg=document.getElementById('floatingBackground');
-  const count=200, size=60, gap=10;
-  const cols=Math.floor(bg.offsetWidth/(size+gap));
-  const rows=Math.floor(bg.offsetHeight/(size+gap));
-  const pos=[];
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) pos.push({x:c*(size+gap),y:r*(size+gap)});
-  pos.sort(()=>0.5-Math.random());
-  for(let i=0;i<Math.min(count,pos.length);i++){
-    const icon=document.createElement('img'); icon.src='w-icon.svg'; icon.className='floating-icon';
-    icon.style.left=pos[i].x+'px'; icon.style.top=pos[i].y+'px';
-    icon.style.animationDuration=(10+Math.random()*10)+'s';
-    icon.style.animationDelay=Math.random()*10+'s';
-    bg.appendChild(icon);
+const floatingBg = document.getElementById('floatingBackground');
+const iconCount = 200;
+const icons = [];
+
+function createInitialIcons() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  for (let i = 0; i < iconCount; i++) {
+    const icon = document.createElement('img');
+    icon.src = 'w-icon.svg';
+    icon.className = 'floating-icon';
+    
+    // Random initial position in viewport
+    icon.dataset.x = Math.random() * vw;
+    icon.dataset.y = Math.random() * vh;
+    icon.style.left = icon.dataset.x + 'px';
+    icon.style.top = icon.dataset.y + 'px';
+
+    floatingBg.appendChild(icon);
+    icons.push(icon);
   }
 }
+
+// Update icon positions on scroll
+function updateIconsOnScroll() {
+  const scrollY = window.scrollY;
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+
+  icons.forEach(icon => {
+    let y = parseFloat(icon.dataset.y) - scrollY * 0.2; // slower parallax effect
+    if (y < -60) { // if icon moves above viewport, recycle to bottom
+      y = vh + Math.random() * 100;
+      icon.dataset.x = Math.random() * vw;
+      icon.dataset.y = y;
+      icon.style.left = icon.dataset.x + 'px';
+    }
+    icon.style.transform = `translateY(${y}px)`;
+  });
+}
+
+window.addEventListener('load', createInitialIcons);
+window.addEventListener('scroll', updateIconsOnScroll);
+window.addEventListener('resize', () => {
+  // Recalculate icon X positions to stay within viewport
+  const vw = window.innerWidth;
+  icons.forEach(icon => {
+    icon.dataset.x = Math.random() * vw;
+    icon.style.left = icon.dataset.x + 'px';
+  });
+});
 </script>
+
+
 
 </body>
 </html>
+
