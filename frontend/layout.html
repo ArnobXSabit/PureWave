@@ -170,35 +170,23 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 <script>
   const BACKEND_URL = "https://purewave.onrender.com"; 
 </script>
-
 <script>
-  // ------------------ Search and Dropdown ------------------
-  const searchForm = document.getElementById('searchForm');
-  const searchInput = document.getElementById('searchInput');
-  searchForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const query = searchInput.value.trim();
-    if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`;
-  });
+let allCategories = [];
 
-  const navbarSearchIcon = document.getElementById('navbarSearchIcon');
-  const navbarSearchDropdown = document.getElementById('navbarSearchDropdown');
-  const navbarDropdownInput = document.getElementById('navbarDropdownInput');
-  const navbarDropdownForm = document.getElementById('navbarDropdownForm');
+async function loadAllCategories() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/categories`);
+    allCategories = await res.json();
+  } catch (err) { console.error(err); }
+}
 
-  navbarSearchIcon.addEventListener('click', e => {
-    e.stopPropagation();
-    navbarSearchDropdown.style.display = navbarSearchDropdown.style.display === 'block' ? 'none' : 'block';
-    if(navbarSearchDropdown.style.display === 'block') navbarDropdownInput.focus();
-  });
-  document.addEventListener('click', e => {
-    if(!navbarSearchDropdown.contains(e.target) && e.target !== navbarSearchIcon) navbarSearchDropdown.style.display = 'none';
-  });
-  navbarDropdownForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const query = navbarDropdownInput.value.trim();
-    if(query) window.location.href = `products.html?search=${encodeURIComponent(query)}`;
-  });
+// Initialize
+document.addEventListener("DOMContentLoaded", ()=>{
+  loadAllCategories(); // important!
+});
+</script>
+<script>
+  // ------------------ Search and Dropdown search with aout complete feature ------------------
 </script>
 
 <script>
