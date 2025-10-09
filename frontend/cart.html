@@ -99,7 +99,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
     </div>
     <nav class="nav-links">
       <a href="index.html"><i class="fas fa-home"></i></a>
-      <a href="allProducts.html"><i class="fas fa-store"></i></a>
+      <a href="products.html"><i class="fas fa-store"></i></a>
       <a href="cart.html"><i class="fas fa-shopping-cart"></i><span class="nav-cart-count" id="duplicateNavbarCartCount">0</span></a>
       <a href="userprofile.html"><i class="fas fa-user"></i></a>
     </nav>
@@ -121,7 +121,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
     <nav class="nav-links">
       <a href="index.html"><i class="fas fa-home"></i></a>
       <a href="javascript:void(0);" id="navbarSearchIcon"><i class="fas fa-search"></i></a>
-      <a href="allProducts.html"><i class="fas fa-store"></i></a>
+      <a href="products.html"><i class="fas fa-store"></i></a>
       <a href="cart.html"><i class="fas fa-shopping-cart"></i><span class="nav-cart-count" id="navbarCartCount">0</span></a>
       <a href="userprofile.html"><i class="fas fa-user"></i></a>
     </nav>
@@ -146,6 +146,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   <i class="fas fa-shopping-cart"></i>
   <span id="cartCount">0</span>
 </a>
+
+<script>
+const BASE_URL = "https://purewave.onrender.com";
+</script>
 
 <script>
 // ---------- Sidebar Toggle ----------
@@ -176,7 +180,7 @@ window.addEventListener('resize', adjustSidebar);
 // ---------- Load Sidebar Categories ----------
 async function loadSidebarCategories(){
   try {
-    const res = await fetch("http://localhost:3000/api/categories");
+    const res = await fetch(`${BASE_URL}/api/categories`);
     const categories = await res.json();
     const container = document.getElementById("sidebarCategories");
     container.innerHTML = "";
@@ -227,10 +231,6 @@ async function loadSidebarCategories(){
   } catch(err){ console.error(err); }
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
-  loadSidebarCategories();
-});
-
 // ---------- Duplicate Navbar Hide ----------
 const duplicateNavbar = document.getElementById('duplicateNavbar');
 let lastScroll = window.scrollY;
@@ -255,7 +255,7 @@ function updateCartCount() {
 let allCategories = [];
 async function loadAllCategories() {
   try { 
-    const res = await fetch("http://localhost:3000/api/categories"); 
+    const res = await fetch(`${BASE_URL}/api/categories`); 
     allCategories = await res.json(); 
   } catch(e){ console.error(e); }
 }
@@ -300,6 +300,7 @@ document.getElementById('searchForm').addEventListener('submit', e=>{
 document.addEventListener('DOMContentLoaded', async ()=>{
   await updateCartCount();
   await loadAllCategories();
+  await loadSidebarCategories();
 });
 
 // ---------- Cart Loading ----------
@@ -310,7 +311,7 @@ async function loadCart() {
 
   if(token){
     try{
-      const res = await fetch("http://localhost:3000/api/cart", { headers:{ "Authorization": `Bearer ${token}` } });
+      const res = await fetch(`${BASE_URL}/api/cart`, { headers:{ "Authorization": `Bearer ${token}` } });
       const data = await res.json();
       if(res.ok && data.success){
         cartItems = data.cart.map(item=>{
@@ -321,7 +322,7 @@ async function loadCart() {
             price: item.price,
             quantity: item.quantity,
             size: item.size,
-            image: item.image || "http://localhost:3000/Products/default.jpg"
+            image: item.image || `${BASE_URL}/Products/default.jpg`
           };
         });
       } else { cartContainer.innerHTML = `<p class="empty-cart">Failed to load cart.</p>`; return; }
@@ -330,7 +331,7 @@ async function loadCart() {
     const localCart = JSON.parse(localStorage.getItem("cart")) || [];
     if(localCart.length === 0){ cartContainer.innerHTML = `<p class="empty-cart">Your cart is empty.</p>`; return; }
     try{
-      const res = await fetch("http://localhost:3000/api/products");
+      const res = await fetch(`${BASE_URL}/api/products`);
       const data = await res.json();
       const products = data.products || [];
       cartItems = localCart.map(item=>{
@@ -342,7 +343,7 @@ async function loadCart() {
           price: product.price || 0,
           quantity: item.quantity,
           size: item.size,
-          image: product.images?.[0] ? (product.images[0].startsWith("http") ? product.images[0] : `http://localhost:3000/${product.images[0]}`) : "http://localhost:3000/Products/default.jpg"
+          image: product.images?.[0] ? (product.images[0].startsWith("http") ? product.images[0] : `${BASE_URL}/${product.images[0]}`) : `${BASE_URL}/Products/default.jpg`
         };
       });
     } catch(err){ console.error(err); cartContainer.innerHTML = `<p class="empty-cart">Error loading products.</p>`; return; }
@@ -443,7 +444,7 @@ async function updateCartItem(row, quantity){
 
   if(token){
     try{
-      await fetch(`http://localhost:3000/api/cart/${cartId}`, {
+      await fetch(`${BASE_URL}/api/cart/${cartId}`, {
         method:"PUT",
         headers:{
           "Content-Type":"application/json",
@@ -471,7 +472,7 @@ async function removeCartItem(row){
   const token = localStorage.getItem("token");
 
   if(token){
-    try{ await fetch(`http://localhost:3000/api/cart/${cartId}`, { method:"DELETE", headers:{ "Authorization": `Bearer ${token}` } }); }
+    try{ await fetch(`${BASE_URL}/api/cart/${cartId}`, { method:"DELETE", headers:{ "Authorization": `Bearer ${token}` } }); }
     catch(err){ console.error(err); }
   } else {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -499,5 +500,6 @@ function updateCartTotal(){
 
 document.addEventListener("DOMContentLoaded", loadCart);
 </script>
+
 </body>
 </html>
