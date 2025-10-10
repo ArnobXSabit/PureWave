@@ -379,7 +379,7 @@ function setupSearchForm(form,input){ form.addEventListener('submit', e=>{ e.pre
 
 // ---------- Floating Icons ----------
 const floatingBg = document.getElementById('floatingBackground');
-let ICON_COUNT = window.innerWidth < 768 ? 100 : 200;
+let ICON_COUNT = window.innerWidth < 768 ? 100 : 200; // reduce icons on small screens
 const ICON_SIZE = 60;
 const icons = [];
 
@@ -422,31 +422,18 @@ function createFloatingIcons() {
   }
 }
 
-// On scroll, move icons slightly but avoid overlap
 function updateIconsOnScroll() {
   const scrollY = window.scrollY;
-  const vw = window.innerWidth;
   const vh = window.innerHeight - 100;
 
-  icons.forEach((icon, index) => {
+  icons.forEach(icon => {
     let y = parseFloat(icon.dataset.y) - scrollY * 0.2;
-
-    // Recycle icon if it goes above viewport
     if (y < -ICON_SIZE) {
-      let xNew, yNew, attempts = 0;
-      do {
-        xNew = Math.random() * (vw - ICON_SIZE);
-        yNew = vh + Math.random() * 100;
-        attempts++;
-        if (attempts > 100) break;
-      } while (isOverlapping(xNew, yNew, icons.filter((_, i) => i !== index)));
-
-      icon.dataset.x = xNew;
-      icon.dataset.y = yNew;
-      icon.style.left = xNew + 'px';
-      y = yNew;
+      y = vh + Math.random() * 100;
+      icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
+      icon.dataset.y = y;
+      icon.style.left = icon.dataset.x + 'px';
     }
-
     icon.style.transform = `translateY(${y}px)`;
   });
 }
@@ -456,6 +443,23 @@ function handleResize() {
   createFloatingIcons();
   updateIconsOnScroll();
 }
+
+// Initialize
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await loadAllCategories();
+  loadSidebarCategories();
+  setupAutocomplete(document.getElementById('searchInput'));
+  setupAutocomplete(document.getElementById('navbarDropdownInput'));
+  setupSearchForm(document.getElementById('searchForm'), document.getElementById('searchInput'));
+  setupSearchForm(document.getElementById('navbarDropdownForm'), document.getElementById('navbarDropdownInput'));
+  updateCartCount();
+  createFloatingIcons();
+
+  const searchIcon=document.getElementById('navbarSearchIcon');
+  const dropdown=document.getElementById('navbarSearchDropdown');
+  searchIcon.addEventListener('click', e=>{ e.stopPropagation(); dropdown.style.display=dropdown.style.display==='block'?'none':'block'; dropdown.querySelector('input').focus(); });
+  document.addEventListener('click', e=>{ if(!dropdown.contains(e.target)&&e.target!==searchIcon) dropdown.style.display='none'; });
+});
 
 window.addEventListener('load', createFloatingIcons);
 window.addEventListener('scroll', updateIconsOnScroll);
