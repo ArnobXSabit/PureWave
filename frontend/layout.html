@@ -369,67 +369,46 @@ function setupAutocomplete(input){
 function setupSearchForm(form,input){ form.addEventListener('submit', e=>{ e.preventDefault(); const q=input.value.trim(); if(q) window.location.href=`products.html?search=${encodeURIComponent(q)}`; }); }
 
 // ---------- Floating Icons ----------
-const floatingBg = document.getElementById('floatingBackground');
-let ICON_COUNT = window.innerWidth < 768 ? 50 : 200;
-const ICON_SIZE = 60;
-const icons = [];
+document.addEventListener("DOMContentLoaded", () => {
+  const floatingBg = document.getElementById("floatingBackground");
+  const iconCount = 200; // total number of icons
+  const iconSize = 60; // width & height of each icon in px
+  const gap = 10; // minimum gap between icons
 
-function isOverlapping(x, y, existingIcons) {
-  for (let icon of existingIcons) {
-    const dx = x - icon.dataset.x;
-    const dy = y - icon.dataset.y;
-    const distance = Math.sqrt(dx*dx + dy*dy);
-    if (distance < ICON_SIZE + 10) return true;
-  }
-  return false;
-}
+  // Calculate number of columns and rows
+  const cols = Math.floor(floatingBg.offsetWidth / (iconSize + gap));
+  const rows = Math.floor(floatingBg.offsetHeight / (iconSize + gap));
 
-function createFloatingIcons() {
-  floatingBg.innerHTML = '';
-  icons.length = 0;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight - 100;
-  for (let i = 0; i < ICON_COUNT; i++) {
-    const icon = document.createElement('img');
-    icon.src = 'w-icon.svg';
-    icon.className = 'floating-icon';
-    let x, y, attempts = 0;
-    do { 
-      x = Math.random() * (vw - ICON_SIZE); 
-      y = Math.random() * (vh - ICON_SIZE); 
-      attempts++; 
-      if (attempts > 100) break; 
-    } while (isOverlapping(x, y, icons));
-    icon.dataset.x = x; 
-    icon.dataset.y = y;
-    icon.style.left = x + 'px'; 
-    icon.style.top = y + 'px';
-    floatingBg.appendChild(icon); 
-    icons.push(icon);
-  }
-}
-
-let ticking = false;
-function updateIconsOnScroll() {
-  if (!ticking) {
-    window.requestAnimationFrame(() => {
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight - 100;
-      icons.forEach(icon => {
-        let y = parseFloat(icon.dataset.y) - scrollY * 0.2;
-        if (y < -ICON_SIZE) {
-          y = vh + Math.random() * 100;
-          icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
-          icon.dataset.y = y;
-          icon.style.left = icon.dataset.x + 'px';
-        }
-        icon.style.transform = `translateY(${y}px)`;
+  // Create all possible grid positions
+  const positions = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      positions.push({
+        x: c * (iconSize + gap),
+        y: r * (iconSize + gap)
       });
-      ticking = false;
-    });
-    ticking = true;
+    }
   }
-}
+
+  // Shuffle positions randomly
+  positions.sort(() => 0.5 - Math.random());
+
+  // Place icons in shuffled positions
+  for (let i = 0; i < Math.min(iconCount, positions.length); i++) {
+    const pos = positions[i];
+    const icon = document.createElement("img");
+    icon.src = "w-icon.svg"; // your icon
+    icon.classList.add("floating-icon");
+    icon.style.left = pos.x + "px";
+    icon.style.top = pos.y + "px";
+
+    // Random animation duration & delay for floating effect
+    icon.style.animationDuration = (10 + Math.random() * 10) + "s";
+    icon.style.animationDelay = Math.random() * 10 + "s";
+
+    floatingBg.appendChild(icon);
+  }
+});
 
 function handleResize() {
   ICON_COUNT = window.innerWidth < 768 ? 50 : 200;
