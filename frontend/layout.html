@@ -368,10 +368,10 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 <style>
 #floatingBackground {
   position: fixed; /* relative to viewport */
-  top: 0;
+  top: 100;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 100px);
   pointer-events: none;
   overflow: hidden;
   z-index: 0;
