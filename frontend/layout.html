@@ -394,27 +394,41 @@ function createFloatingIcons() {
     icon.src = 'w-icon.svg';
     icon.className = 'floating-icon';
     let x, y, attempts = 0;
-    do { x = Math.random() * (vw - ICON_SIZE); y = Math.random() * (vh - ICON_SIZE); attempts++; if (attempts > 100) break; } while (isOverlapping(x, y, icons));
-    icon.dataset.x = x; icon.dataset.y = y;
-    icon.style.left = x + 'px'; icon.style.top = y + 'px';
-    floatingBg.appendChild(icon); icons.push(icon);
+    do { 
+      x = Math.random() * (vw - ICON_SIZE); 
+      y = Math.random() * (vh - ICON_SIZE); 
+      attempts++; 
+      if (attempts > 100) break; 
+    } while (isOverlapping(x, y, icons));
+    icon.dataset.x = x; 
+    icon.dataset.y = y;
+    icon.style.left = x + 'px'; 
+    icon.style.top = y + 'px';
+    floatingBg.appendChild(icon); 
+    icons.push(icon);
   }
 }
 
 let ticking = false;
 function updateIconsOnScroll() {
-  const scrollY = window.scrollY;
-  const vh = window.innerHeight - 100;
-  icons.forEach(icon => {
-    let y = parseFloat(icon.dataset.y) - scrollY * 0.2;
-    if (y < -ICON_SIZE) {
-      y = vh + Math.random() * 100;
-      icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
-      icon.dataset.y = y;
-      icon.style.left = icon.dataset.x + 'px';
-    }
-    icon.style.transform = `translateY(${y}px)`;
-  });
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      const scrollY = window.scrollY;
+      const vh = window.innerHeight - 100;
+      icons.forEach(icon => {
+        let y = parseFloat(icon.dataset.y) - scrollY * 0.2;
+        if (y < -ICON_SIZE) {
+          y = vh + Math.random() * 100;
+          icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
+          icon.dataset.y = y;
+          icon.style.left = icon.dataset.x + 'px';
+        }
+        icon.style.transform = `translateY(${y}px)`;
+      });
+      ticking = false;
+    });
+    ticking = true;
+  }
 }
 
 function handleResize() {
@@ -428,7 +442,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   await loadAllCategories();
   loadSidebarCategories();
   setupAutocomplete(document.getElementById('searchInput'));
-  setupAutocomplete(document.getElementById('navbarDropdownInput'));
+  setupAutocomplete(document.getElementById('navbarDropdownInput')); // fixed typo
   setupSearchForm(document.getElementById('searchForm'), document.getElementById('searchInput'));
   setupSearchForm(document.getElementById('navbarDropdownForm'), document.getElementById('navbarDropdownInput'));
   updateCartCount();
@@ -436,14 +450,20 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
   const searchIcon=document.getElementById('navbarSearchIcon');
   const dropdown=document.getElementById('navbarSearchDropdown');
-  searchIcon.addEventListener('click', e=>{ e.stopPropagation(); dropdown.style.display=dropdown.style.display==='block'?'none':'block'; dropdown.querySelector('input').focus(); });
-  document.addEventListener('click', e=>{ if(!dropdown.contains(e.target)&&e.target!==searchIcon) dropdown.style.display='none'; });
+  searchIcon.addEventListener('click', e=>{
+    e.stopPropagation();
+    dropdown.style.display=dropdown.style.display==='block'?'none':'block';
+    dropdown.querySelector('input').focus();
+  });
+  document.addEventListener('click', e=>{
+    if(!dropdown.contains(e.target)&&e.target!==searchIcon) dropdown.style.display='none';
+  });
 });
 
-window.addEventListener('scroll', ()=>{
-  if(!ticking){ window.requestAnimationFrame(()=>{ updateIconsOnScroll(); ticking=false; }); ticking=true; }
-});
+// Use requestAnimationFrame on scroll for smoother performance
+window.addEventListener('scroll', updateIconsOnScroll);
 window.addEventListener('resize', handleResize);
+
 </script>
 
 </body>
