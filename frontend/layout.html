@@ -56,27 +56,6 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 #floatingCart {position: fixed;bottom: 30px;right: 30px;width:50px;height:50px;background:#3a91f5;color:#fff;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:1.5rem;z-index:1200;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
 #floatingCart span { position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff0000; color:#fff; font-size:0.75rem; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; }
 
-/* ---------- Floating Background ---------- */
-#floatingBackground {
-  position: fixed;        /* FIXED instead of absolute */
-  top: 100px;             /* will be dynamically updated */
-  left: 0;
-  right: 0;
-  bottom: 0;              /* stretches to bottom of viewport */
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.floating-icon {position: absolute;width: 60px;height: 60px;opacity: 0.1;animation: float 12s ease-in-out infinite;}
-@keyframes float {
-  0%   { transform: translateY(0) translateX(0) rotate(0deg); }
-  25%  { transform: translateY(-20px) translateX(10px) rotate(10deg); }
-  50%  { transform: translateY(20px) translateX(-10px) rotate(-10deg); }
-  75%  { transform: translateY(-10px) translateX(5px) rotate(5deg); }
-  100% { transform: translateY(0) translateX(0) rotate(0deg); }
-}
-
 /* Center search bar */
 .nav-center { flex:1; display:flex; justify-content:center; align-items:center; position:relative; }
 .nav-center input[type="text"] {
@@ -195,6 +174,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
     </div>
   </div>
 </header>
+
 <!-- Floating Icons Background -->
 <div id="floatingBackground"></div>
 
@@ -396,16 +376,16 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   overflow: hidden;
   z-index: 0;
 }
-.floating-icon {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  opacity: 0.1;
-  transition: transform 0.1s linear;
+
+.floating-icon {position: absolute;width: 60px;height: 60px;opacity: 0.1;animation: float 12s ease-in-out infinite;}
+@keyframes float {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); }
+  25%  { transform: translateY(-20px) translateX(10px) rotate(10deg); }
+  50%  { transform: translateY(20px) translateX(-10px) rotate(-10deg); }
+  75%  { transform: translateY(-10px) translateX(5px) rotate(5deg); }
+  100% { transform: translateY(0) translateX(0) rotate(0deg); }
 }
 </style>
-
-<div id="floatingBackground"></div>
 
 <script>
 const floatingBg = document.getElementById('floatingBackground');
