@@ -23,6 +23,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   position:fixed; 
   top:0; 
   z-index:1000; 
+  
 }
 .nav-container {
   display: flex;
@@ -30,21 +31,21 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   align-items: center;
   gap:16px;
   width:100%;
-  padding:20px;
+  padding:8px;
 }
 .nav-left { display:flex; align-items:center; gap:16px; }
 .nav-left .brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
-.nav-left .brand-icon { height:25px; }
-.nav-left .logo { font-size:1.8rem; font-weight:bold; color:#222; font-family:'Raleway', sans-serif; }
+.nav-left .brand-icon { height:20px; }
+.nav-left .logo { font-size:1.4rem; font-weight:bold; color:#222; font-family:'Raleway', sans-serif; }
 
 /* Center search bar */
 .nav-center { flex:1; display:flex; justify-content:center; align-items:center; position:relative; }
 .nav-center input[type="text"] {
   width:100%;
-  max-width:300px;
-  padding:8px 12px;
+  max-width:250px;
+  padding:6px 12px;
   border:1px solid #ccc;
-  border-radius:24px 0 0 24px;
+  border-radius:18px 0 0 18px;
   outline:none;
 }
 .nav-center button {
@@ -59,7 +60,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 .nav-center button:hover { background:#333; }
 
 .nav-links { display:flex; gap:50px; align-items:center; }
-.nav-links a { color:#222; font-size:1.4rem; transition: color 0.3s; position:relative; }
+.nav-links a { color:#222; font-size:1rem; transition: color 0.3s; position:relative; }
 .nav-links a:hover { color:#3a91f5; }
 
 /* Duplicate Navbar */
