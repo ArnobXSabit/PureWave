@@ -109,7 +109,36 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 
 /* Responsive */
 @media (max-width: 768px) { .search-wrapper { max-width: 90vw; } }
+@media (max-width: 500px) { #sidebar { width: 80vw; } }
 
+/* Floating background & icons */
+#floatingBackground {
+  position: fixed;
+  top: 100px; /* below navbar */
+  left: 0;
+  width: 100%;
+  height: calc(100% - 100px);
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+.floating-icon {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  opacity: 0.1;
+  animation: float 12s ease-in-out infinite;
+}
+@keyframes float {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); }
+  25%  { transform: translateY(-20px) translateX(10px) rotate(10deg); }
+  50%  { transform: translateY(20px) translateX(-10px) rotate(-10deg); }
+  75%  { transform: translateY(-10px) translateX(5px) rotate(5deg); }
+  100% { transform: translateY(0) translateX(0) rotate(0deg); }
+}
+
+/* Accessibility */
+#sidebarToggle, #sidebarToggle2 { aria-label: "Toggle Sidebar Menu"; }
 </style>
 </head>
 <body>
@@ -163,7 +192,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
       <a href="userprofile.html" title="Profile"><i class="fas fa-user"></i></a>
     </nav>
 
-    <!-- Dropdown Search Bar (styled same as duplicate navbar) -->
+    <!-- Dropdown Search Bar -->
     <div id="navbarSearchDropdown" style="display:none;">
       <div class="nav-center">
         <form id="navbarDropdownForm" style="display:flex; width:100%; max-width:400px; position:relative;">
@@ -175,12 +204,13 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   </div>
 </header>
 
-<!-- Floating Icons Background -->
+<!-- Floating Background -->
 <div id="floatingBackground"></div>
 
 <main>
-  <!-- Your main content -->
-     <h2>Categories</h2>
+  <h2>Categories</h2>
+  <h2>Categories</h2>
+  <h2>Categories</h2>
   <h2>Categories</h2>
   <h2>Categories</h2>
   <h2>Categories</h2>
@@ -347,83 +377,39 @@ function setupAutocomplete(input){
 // Search forms
 function setupSearchForm(form,input){ form.addEventListener('submit', e=>{ e.preventDefault(); const q=input.value.trim(); if(q) window.location.href=`products.html?search=${encodeURIComponent(q)}`; }); }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', async ()=>{
-  await loadAllCategories();
-  loadSidebarCategories();
-  setupAutocomplete(document.getElementById('searchInput'));
-  setupAutocomplete(document.getElementById('navbarDropdownInput'));
-  setupSearchForm(document.getElementById('searchForm'), document.getElementById('searchInput'));
-  setupSearchForm(document.getElementById('navbarDropdownForm'), document.getElementById('navbarDropdownInput'));
-  updateCartCount();
-  createFloatingIcons();
-
-  const searchIcon=document.getElementById('navbarSearchIcon');
-  const dropdown=document.getElementById('navbarSearchDropdown');
-  searchIcon.addEventListener('click', e=>{ e.stopPropagation(); dropdown.style.display=dropdown.style.display==='block'?'none':'block'; dropdown.querySelector('input').focus(); });
-  document.addEventListener('click', e=>{ if(!dropdown.contains(e.target)&&e.target!==searchIcon) dropdown.style.display='none'; });
-});
-</script>
-
-<style>
-#floatingBackground {
-  position: fixed; /* relative to viewport */
-  top: 100;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 100px);
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.floating-icon {position: absolute;width: 60px;height: 60px;opacity: 0.1;animation: float 12s ease-in-out infinite;}
-@keyframes float {
-  0%   { transform: translateY(0) translateX(0) rotate(0deg); }
-  25%  { transform: translateY(-20px) translateX(10px) rotate(10deg); }
-  50%  { transform: translateY(20px) translateX(-10px) rotate(-10deg); }
-  75%  { transform: translateY(-10px) translateX(5px) rotate(5deg); }
-  100% { transform: translateY(0) translateX(0) rotate(0deg); }
-}
-</style>
-
-<script>
+// ---------- Floating Icons ----------
 const floatingBg = document.getElementById('floatingBackground');
-const ICON_COUNT = 200;
-const ICON_SIZE = 60; // width & height
+let ICON_COUNT = window.innerWidth < 768 ? 100 : 200;
+const ICON_SIZE = 60;
 const icons = [];
 
-// Check if a new icon position overlaps with existing ones
 function isOverlapping(x, y, existingIcons) {
   for (let icon of existingIcons) {
     const dx = x - icon.dataset.x;
     const dy = y - icon.dataset.y;
     const distance = Math.sqrt(dx*dx + dy*dy);
-    if (distance < ICON_SIZE + 10) return true; // minimum spacing
+    if (distance < ICON_SIZE + 10) return true;
   }
   return false;
 }
 
-// Create icons without overlapping
 function createFloatingIcons() {
-  floatingBg.innerHTML = ''; // clear existing
+  floatingBg.innerHTML = '';
   icons.length = 0;
-
   const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const vh = window.innerHeight - 100;
 
   for (let i = 0; i < ICON_COUNT; i++) {
     const icon = document.createElement('img');
-    icon.src = 'w-icon.svg'; // your icon path
+    icon.src = 'w-icon.svg';
     icon.className = 'floating-icon';
 
-    // Find a non-overlapping position
     let x, y, attempts = 0;
     do {
       x = Math.random() * (vw - ICON_SIZE);
       y = Math.random() * (vh - ICON_SIZE);
       attempts++;
-      if (attempts > 100) break; // fallback
+      if (attempts > 100) break;
     } while (isOverlapping(x, y, icons));
 
     icon.dataset.x = x;
@@ -436,25 +422,37 @@ function createFloatingIcons() {
   }
 }
 
-// Scroll parallax & recycle icons
+// On scroll, move icons slightly but avoid overlap
 function updateIconsOnScroll() {
   const scrollY = window.scrollY;
-  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight - 100;
 
-  icons.forEach(icon => {
-    let y = parseFloat(icon.dataset.y) - scrollY * 0.2; // slower parallax
-    if (y < -ICON_SIZE) { // recycle from bottom
-      y = vh + Math.random() * 100;
-      icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
-      icon.dataset.y = y;
-      icon.style.left = icon.dataset.x + 'px';
+  icons.forEach((icon, index) => {
+    let y = parseFloat(icon.dataset.y) - scrollY * 0.2;
+
+    // Recycle icon if it goes above viewport
+    if (y < -ICON_SIZE) {
+      let xNew, yNew, attempts = 0;
+      do {
+        xNew = Math.random() * (vw - ICON_SIZE);
+        yNew = vh + Math.random() * 100;
+        attempts++;
+        if (attempts > 100) break;
+      } while (isOverlapping(xNew, yNew, icons.filter((_, i) => i !== index)));
+
+      icon.dataset.x = xNew;
+      icon.dataset.y = yNew;
+      icon.style.left = xNew + 'px';
+      y = yNew;
     }
+
     icon.style.transform = `translateY(${y}px)`;
   });
 }
 
-// Recreate on resize
 function handleResize() {
+  ICON_COUNT = window.innerWidth < 768 ? 100 : 200;
   createFloatingIcons();
   updateIconsOnScroll();
 }
@@ -462,8 +460,7 @@ function handleResize() {
 window.addEventListener('load', createFloatingIcons);
 window.addEventListener('scroll', updateIconsOnScroll);
 window.addEventListener('resize', handleResize);
-
 </script>
+
 </body>
 </html>
-
