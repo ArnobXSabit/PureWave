@@ -6,8 +6,11 @@
 <title>PureWave</title>
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;900&display=swap" rel="stylesheet">
+
+ <!-- Google Font for Logo -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;900&display=swap" rel="stylesheet">
+
+
 <link rel="icon" type="image/x-icon" href="favicon.png">
 
 <style>
@@ -19,7 +22,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 .navbar, .duplicate-navbar {
   width:100%; 
   background:#fff; 
-  box-shadow:0 2px 8px rgba(0,0,0,0.1); 
+  box-shadow:0 2px 5px rgba(114, 114, 114, 0.1); 
   position:fixed; 
   top:0; 
   z-index:1000; 
@@ -31,13 +34,26 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   align-items: center;
   gap:16px;
   width:99%;
-  padding:8px;
+  padding:10px;
 }
 
 .nav-left { display:flex; align-items:center; gap:16px; }
 .nav-left .brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
 .nav-left .brand-icon { height:20px; }
-.nav-left .logo { font-size:1.8rem; font-weight:bold; color:#222; font-family:'Raleway', sans-serif; }
+.nav-left .logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: #222;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+}
+@media (max-width: 768px) {
+    .nav-left .logo {
+        font-size: 1.3rem;
+    }
+}
 
 /* Nav links */
 .nav-links { display:flex; gap:30px; align-items:center; }
@@ -170,7 +186,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
       <button id="sidebarToggle2" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
       <a href="index.html" class="brand">
         <img src="icon.png" alt="Brand Icon" class="brand-icon">
-        <span class="logo">PureWave</span>
+        <span class="logo">PUREWAVE</span>
       </a>
     </div>
     <div class="nav-center">
@@ -198,7 +214,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
       <button id="sidebarToggle" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
       <a href="index.html" class="brand">
         <img src="icon.png" alt="Brand Icon" class="brand-icon">
-        <span class="logo">PureWave</span>
+        <span class="logo">PUREWAVE</span>
       </a>
     </div>
     <nav class="nav-links">
