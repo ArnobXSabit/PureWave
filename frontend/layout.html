@@ -14,7 +14,7 @@
 <style>
 /* ---------- Global Styles ---------- */
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', Arial, sans-serif; }
-body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top:100px; }
+body { background:#fff; color:#333; line-height:1.6; font-size:16px;}
 
 /* ---------- Navbar ---------- */
 .navbar{
@@ -600,20 +600,37 @@ function updateCartCount(){
   document.getElementById('duplicateNavbarCartCount').textContent=cartItems;
 }
 
-// ---------- Duplicate navbar scroll ----------
+// ---------- Duplicate navbar scroll & content adjust ----------
 const duplicateNavbar = document.getElementById('duplicateNavbar');
-const hideThreshold = 1; // hide after scrolling 50px
+const mainContent = document.querySelector('main');
+const hideThreshold = 1;
+
+// Heights
+const originalNavbarHeight = document.getElementById('navbar').offsetHeight; // 70px or your navbar height
+const duplicateNavbarHeight = duplicateNavbar.offsetHeight; // 120px
+
+// Add smooth transition for padding
+mainContent.style.transition = 'padding-top 0.1s ease';
 
 window.addEventListener('scroll', () => {
   const scrollY = window.scrollY;
 
   if (scrollY > hideThreshold) {
+    // Hide duplicate navbar
     duplicateNavbar.classList.add('hidden');
+    // Main content padding = original navbar only
+    mainContent.style.paddingTop = originalNavbarHeight + 'px';
   } else {
-    // Only show when at the very top
+    // Show duplicate navbar
     duplicateNavbar.classList.remove('hidden');
+    // Main content padding = original + duplicate navbar
+    mainContent.style.paddingTop = ( duplicateNavbarHeight) + 'px';
   }
-});
+})
+
+// Initialize padding on page load
+mainContent.style.paddingTop = (duplicateNavbarHeight) + 'px';
+
 
 // ---------- Autocomplete ----------
 function setupAutocomplete(input){
