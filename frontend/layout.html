@@ -26,7 +26,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   top: 0;
   z-index: 1000;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(114,114,114,0.1);
+  box-shadow: 0 5px 8px rgba(114,114,114,0.1);
   display: flex;
   align-items: center;
 
@@ -35,6 +35,13 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   border-bottom-right-radius: 10px;
 }
 
+#navbarDropdownInput {
+    height: 30px ; 
+    width: 500px;
+    max-width: 100%;
+}
+
+
 .duplicate-navbar {
   height: 100px;
   width: 100%;
@@ -42,7 +49,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   top: 0;
   z-index: 1000;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(114,114,114,0.1);
+  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
 }
@@ -99,11 +106,39 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 }
 
 .duplicate-navbar .nav-container {
-  width: 1600px;       /* fixed width */
-  max-width: 100%;      /* optional: never exceed 98% on smaller screens */
-  margin: 0 auto;      /* center it */
+  width: 93%;  
+  max-width: 100%;
+  left: 2%;
+  right: 5%; /* smaller right offset */
 }
 
+.duplicate-navbar .nav-container {
+  display: flex;
+  justify-content: flex-start; /* or space-around / gap */
+  gap: 125px; /* distance between search & cart */
+}
+
+.duplicate-navbar .nav-links a i {
+  font-size: 1.5rem; /* increase size (default is ~1rem) */
+  color: #3e3e3e;    /* optional: change color */
+  transition: color 0.3s;
+}
+/* Hover color */
+.duplicate-navbar .nav-links a:hover i {
+  color: #3a91f5;     /* color on hover */
+}
+.duplicate-navbar .nav-cart-count {
+  width: 15px;       /* bigger badge */
+  height: 15px;
+  font-size: 0.85rem;
+  top: -0px;        /* adjust vertical */
+  right: -15px;      /* adjust horizontal */
+}
+
+/* Optional: adjust spacing between search and icons */
+.duplicate-navbar .nav-container {
+  gap: 120px;  /* decrease space between center search and nav-links */
+}
 
 /* promo bar full control here */
 
@@ -210,7 +245,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 /* Boxy Modern Search Bar */
 .nav-center {
   position: relative;
-  max-width: 300px;
+  max-width: 800px;
   width: 100%;
 }
 
@@ -218,7 +253,6 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   width: 100%;
   padding: 10px 36px 10px 12px; /* space for search icon on right */
   border: 1px solid #ccc;       /* subtle border */
-  border-radius: 6px;            /* boxy shape */
   font-size: 0.95rem;
   outline: none;
   transition: border 0.3s, box-shadow 0.3s;
@@ -403,10 +437,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
         </form>
       </div>
     <nav class="nav-links">
-      <a href="cart.html" title="Cart">
-        <i class="fas fa-shopping-cart"></i>
-        <span class="nav-cart-count" id="duplicateNavbarCartCount">0</span>
-      </a>
+        <a href="cart.html" title="Cart">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="nav-cart-count" id="duplicateNavbarCartCount">0</span>
+        </a>
     </nav>
   </div>
 </header>
@@ -438,7 +472,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 
     <div id="navbarSearchDropdown" style="display:none;">
       <div class="nav-center">
-        <form id="navbarDropdownForm" style="display:flex; width:100%; max-width:400px; position:relative;">
+        <form id="navbarDropdownForm" style="display:flex; width:100%; max-width:800px; position:relative;">
           <input type="text" id="navbarDropdownInput" placeholder="Search products...">
           <button type="submit"><i class="fas fa-search"></i></button>
         </form>
