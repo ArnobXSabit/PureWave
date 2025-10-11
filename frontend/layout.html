@@ -239,8 +239,43 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px;}
 
 /* ---------- Cart ---------- */
 .nav-cart-count {position: absolute;top: -8px;right: -8px;background: #3a91f5;color: #fff;font-size: 0.75rem;font-weight: bold;width: 18px;height: 18px;border-radius: 50%;display: flex;justify-content: center;align-items: center;}
-#floatingCart {position: fixed;bottom: 30px;right: 30px;width:50px;height:50px;background:#3a91f5;color:#fff;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:1.5rem;z-index:1200;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
-#floatingCart span { position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff0000; color:#fff; font-size:0.75rem; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; }
+/* Floating Rectangle Cart */
+#floatingCart {
+  position: fixed;
+  top: 50%;                /* place at the middle vertically */
+  right: -0.5%;             /* stick to the right edge */
+  transform: translateY(-50%); /* center it perfectly */
+  
+  width: 50px;
+  height: 50px;
+  background: #3a91f5;
+  color: #fff;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  z-index: 1200;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Red bubble on top-right corner of the cart */
+#floatingCart span {
+  position: absolute;
+  top: -5px;
+  right: 45px;
+  width: 20px;
+  height: 20px;
+  background: #ff0000;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 /* Center search bar */
 /* Boxy Modern Search Bar */
@@ -850,5 +885,3 @@ window.addEventListener('scroll', updateIconsOnScroll);
 window.addEventListener('resize', handleResize);
 
 </script>
-
-</botesting layout
