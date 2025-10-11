@@ -601,13 +601,18 @@ function updateCartCount(){
 }
 
 // ---------- Duplicate navbar scroll ----------
-const duplicateNavbar=document.getElementById('duplicateNavbar');
-let lastScroll=window.scrollY;
-window.addEventListener('scroll',()=>{
-  const current=window.scrollY;
-  if(current>lastScroll && current>50) duplicateNavbar.classList.add('hidden');
-  else duplicateNavbar.classList.remove('hidden');
-  lastScroll=current;
+const duplicateNavbar = document.getElementById('duplicateNavbar');
+const hideThreshold = 1; // hide after scrolling 50px
+
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+
+  if (scrollY > hideThreshold) {
+    duplicateNavbar.classList.add('hidden');
+  } else {
+    // Only show when at the very top
+    duplicateNavbar.classList.remove('hidden');
+  }
 });
 
 // ---------- Autocomplete ----------
