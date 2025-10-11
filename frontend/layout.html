@@ -207,29 +207,44 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 #floatingCart span { position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff0000; color:#fff; font-size:0.75rem; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; }
 
 /* Center search bar */
-.nav-center{ 
-  display: flex;
-  align-items: center;
-  gap: 12px; /* or whatever space you want */
+/* Boxy Modern Search Bar */
+.nav-center {
+  position: relative;
+  max-width: 300px;
+  width: 100%;
 }
+
 .nav-center input[type="text"] {
-  width:100%;
-  max-width:300px;
-  padding:8px 12px;
-  border:1px solid #ccc;
-  border-radius:24px 0 0 24px;
-  outline:none;
+  width: 100%;
+  padding: 10px 36px 10px 12px; /* space for search icon on right */
+  border: 1px solid #ccc;       /* subtle border */
+  border-radius: 6px;            /* boxy shape */
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
 }
+
+.nav-center input[type="text"]:focus {
+  border-color: #3a91f5;
+}
+
+/* Search icon inside input */
 .nav-center button {
-  padding:8px 16px;
-  border:none;
-  background:#000;
-  color:#fff;
-  border-radius:0 24px 24px 0;
-  cursor:pointer;
-  transition: background 0.3s;
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #555;
+  padding: 0;
 }
-.nav-center button:hover { background:#333; }
+.nav-center button:hover {
+  color: #3a91f5;
+}
+
 
 /* Autocomplete dropdown */
 .autocomplete-items {
@@ -381,12 +396,12 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
       <a href="products.html" title="Shop"><i class="fas fa-store"></i></a>
       </nav>
     </div>
-    <div class="nav-center">
-      <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
-        <input type="text" id="searchInput" placeholder="Search products...">
-        <button type="submit"><i class="fas fa-search"></i></button>
-      </form>
-    </div>
+      <div class="nav-center">
+        <form id="searchForm" style="position: relative; width: 100%;">
+          <input type="text" id="searchInput" placeholder="Search products...">
+          <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+      </div>
     <nav class="nav-links">
       <a href="cart.html" title="Cart">
         <i class="fas fa-shopping-cart"></i>
