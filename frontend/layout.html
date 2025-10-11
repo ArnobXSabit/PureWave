@@ -16,16 +16,32 @@
 body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top:100px; }
 
 /* ---------- Navbar ---------- */
-.navbar, .duplicate-navbar {width:100%; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:fixed; top:0; z-index:1000;}
-.nav-container {display: flex;justify-content: space-between;align-items: center;gap:16px;width:100%;padding:20px;}
+.navbar, .duplicate-navbar {
+  width:100%; 
+  background:#fff; 
+  box-shadow:0 2px 8px rgba(0,0,0,0.1); 
+  position:fixed; 
+  top:0; 
+  z-index:1000; 
+  
+}
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap:16px;
+  width:99%;
+  padding:8px;
+}
+
 .nav-left { display:flex; align-items:center; gap:16px; }
 .nav-left .brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
-.nav-left .brand-icon { height:25px; }
+.nav-left .brand-icon { height:20px; }
 .nav-left .logo { font-size:1.8rem; font-weight:bold; color:#222; font-family:'Raleway', sans-serif; }
 
 /* Nav links */
-.nav-links { display:flex; gap:50px; align-items:center; }
-.nav-links a { color:#222; font-size:1.4rem; transition: color 0.3s; position:relative; }
+.nav-links { display:flex; gap:30px; align-items:center; }
+.nav-links a { color:#222; font-size:1.0rem; transition: color 0.3s; position:relative; }
 .nav-links a:hover { color:#3a91f5; }
 
 /* Duplicate Navbar */
