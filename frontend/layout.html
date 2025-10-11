@@ -7,6 +7,8 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+<link href="https://cdn.jsdelivr.net/npm/heroicons@2.0.13/dist/heroicons.min.css" rel="stylesheet">
+
 <link rel="icon" type="image/x-icon" href="favicon.png">
 
 <style>
@@ -73,7 +75,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 .nav-links {
   display: flex;
   align-items: center; /* vertical center */
-  gap: 20px; /* or whatever space you want */
+  gap: 25px; /* or whatever space you want */
 }
 .nav-links a { color:#222; font-size:1.0rem; transition: color 0.3s; position:relative; }
 .nav-links a:hover { color:#3a91f5; }
@@ -149,6 +151,32 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   #navbarSearchDropdown { width: 90vw !important; left: 5vw; }
 }
 
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: #222;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Optional: animate hamburger into X when active */
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
 /* ---------- Sidebar ---------- */
 #sidebar { position: fixed; top: 100px; left: -400px; width: 400px; height: calc(100% - 100px); background:#fafafa; color:#1a1a1a; overflow-y:auto; box-shadow:3px 0 12px rgba(0,0,0,0.1); padding:20px; transition:left 0.3s ease; z-index:1200; }
 #sidebar.open { left:0; }
@@ -206,12 +234,14 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 <header class="duplicate-navbar" id="duplicateNavbar">
   <div class="nav-container">
     <div class="nav-left">
-      <button id="sidebarToggle2" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
+      <button id="sidebarToggle2" class="hamburger" aria-label="Toggle Sidebar">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
         <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
           <img src="home.svg" alt="PureWave Logo" class="brand-icon">
         </a>
-
-
     </div>
     <div class="nav-center">
       <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
@@ -235,12 +265,14 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 <header class="navbar" id="navbar">
   <div class="nav-container">
     <div class="nav-left">
-      <button id="sidebarToggle" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
+      <button id="sidebarToggle" class="hamburger" aria-label="Toggle Sidebar">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
         <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
           <img src="home.svg" alt="PureWave Logo" class="brand-icon">
         </a>
-
-
     </div>
     <nav class="nav-links">
       <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
@@ -365,8 +397,16 @@ async function loadSidebarCategories() {
 const sidebarToggle=document.getElementById('sidebarToggle');
 const sidebarToggle2=document.getElementById('sidebarToggle2');
 const sidebar=document.getElementById('sidebar');
-sidebarToggle.addEventListener('click', ()=> sidebar.classList.toggle('open'));
-sidebarToggle2.addEventListener('click', ()=> sidebar.classList.toggle('open'));
+sidebarToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  sidebarToggle.classList.toggle('active'); // animate hamburger
+});
+
+sidebarToggle2.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  sidebarToggle2.classList.toggle('active'); // animate hamburger
+});
+
 document.addEventListener('click', e=>{ if(!sidebar.contains(e.target)&&!sidebarToggle.contains(e.target)&&!sidebarToggle2.contains(e.target)) sidebar.classList.remove('open'); });
 function adjustSidebar() { const navHeight=document.querySelector('.navbar').offsetHeight; sidebar.style.top=navHeight+'px'; sidebar.style.height=`calc(100% - ${navHeight}px)`; }
 window.addEventListener('load', adjustSidebar); window.addEventListener('resize', adjustSidebar);
