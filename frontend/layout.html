@@ -108,7 +108,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   display: flex;
   width: 100%;
   height: 50px;
-  background-color: #e9ecef ; 
+  background-color: #f0f2f5 ; 
 }
 
 /* Each section */
@@ -128,36 +128,74 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
   background-color: #000000;
   padding: 0 8px;
 }
-.promo1 .top-item { color: #ffffff; }
+.promo1 .top-item {
+  font-weight: 700;      /* bold */
+  color:white ; 
+  text-decoration: none; /* no underline */
+  font-size: .88rem;    /* smaller */
+}
+
+.thunder-icon {
+  color: #e7ad5c;       /* gold/yellow */
+  margin-right: 3px;    /* space between icon and text */
+  font-size: 1.3rem;    /* adjust size */
+  vertical-align: middle;
+}
 
 /* Promo 2 */
 .promo2 {
   flex: 0 0 25.5% ; 
   padding: 0 12px;
 }
-.promo2 .top-item { color: #0077ff; }
 
 /* Promo 3 */
 .promo3 {
-  flex: 0 0 15% ; 
+  flex: 0 0 17% ; 
   background-color: #000000;
   padding: 0 6px;
 }
-.promo3 .top-item { color: #ffffff; }
+.promo3 .top-item {
+  font-weight: 400;      /* bold */
+  color:white ; 
+  text-decoration: none; /* no underline */
+  font-size: 0.80rem;    /* smaller */
+}
+.promo3 .fa-truck {
+  transform: scaleY(-1); /* flips the truck horizontally */
+  transform: scaleX(-1);
+}
 
 /* Promo 4 */
 .promo4 { 
   flex: 0 0 0.5% ; 
   padding: 0 10px; 
 }
-.promo4 .top-item { color: #ff9900; }
 
 /* Promo 5 */
 .promo5 { 
   flex: 0 0 15% ; 
   background-color: #000000;
   padding: 0 12px; }
-.promo5 .top-item { color: #ffffff; }
+.promo5 .top-item {
+  font-weight: 400;      /* bold */
+  color:white ; 
+  text-decoration: none; /* no underline */
+  font-size: 0.80rem;    /* smaller */
+}
+
+.promo6 .top-item {
+  font-weight: 500;      /* bold */
+  color:rgb(0, 0, 0) ; 
+  text-decoration: none; /* no underline */
+  font-size: 0.90rem;    /* smaller */
+}
+
+.promo7 .top-item {
+  font-weight: 500;      /* bold */
+  color:#3a91f5; 
+  text-decoration: none; /* no underline */
+  font-size: 0.90rem;    /* smaller */
+}
 
 
 /* ---------- Cart ---------- */
@@ -311,13 +349,21 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 
 <!-- Top Promo Bar -->
 <div class="top-bar">
-  <div class="top-bar-section promo1"><a href="sale.html" class="top-item">Exclusive Polo T-Shirts on Sale | Limited Time Only ></a></div>
+  <div class="top-bar-section promo1"><a href="sale.html" class="top-item">
+    <i class="fas fa-bolt thunder-icon"></i>
+  EXCLUSIVE T-SHIRTS ON SALE | Limited Time Only
+  <span class="arrow-circle"><i class="fas fa-arrow-right"></i></span>
+</a>
+</div>
   <div class="top-bar-section promo2"><a href="#" class="top-item"></a></div>
-  <div class="top-bar-section promo3"><a href="bulk.html" class="top-item"><i class="fas fa-car"></i> Order Bulk / Corporate Sale</a></div>
+  <div class="top-bar-section promo3"><a href="bulk.html" class="top-item"><i class="fas fa-truck"></i> Order Bulk / Corporate Sale</a></div>
   <div class="top-bar-section promo4"><a href="#" class="top-item"></a></div>
   <div class="top-bar-section promo5"><a href="locations.html" class="top-item"><i class="fas fa-location-dot"></i> Store Location</a></div>
-  <div class="top-bar-section promo6"><a href="about.html" class="top-item">? About Us</a></div>
-  <div class="top-bar-section promo7"><a href="login.html" class="top-item">Login</a></div>
+  <div class="top-bar-section promo6"><a href="about.html" class="top-item"><i class="fas fa-circle-question"></i> About Us</a></div>
+  <div class="top-bar-section promo7"><a href="login.html" class="top-item">
+      <i class="fas fa-right-to-bracket" style="margin-right:4px;"></i> Login
+      </a>
+    </div>
 </div>
 
   <!-- Bottom Navbar (Existing Duplicate Navbar Content) -->
@@ -327,6 +373,11 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
         <img src="home.svg" alt="PureWave Logo" class="brand-icon">
       </a>
     </div>
+    <div>
+          <nav class="nav-links">
+      <a href="products.html" title="Shop"><i class="fas fa-store"></i></a>
+      </nav>
+    </div>
     <div class="nav-center">
       <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
         <input type="text" id="searchInput" placeholder="Search products...">
@@ -334,13 +385,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
       </form>
     </div>
     <nav class="nav-links">
-      <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
-      <a href="products.html" title="Shop"><i class="fas fa-store"></i></a>
       <a href="cart.html" title="Cart">
         <i class="fas fa-shopping-cart"></i>
         <span class="nav-cart-count" id="duplicateNavbarCartCount">0</span>
       </a>
-      <a href="userprofile.html" title="Profile"><i class="fas fa-user"></i></a>
     </nav>
   </div>
 </header>
