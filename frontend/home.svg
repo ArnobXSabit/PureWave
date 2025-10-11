@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 535 73">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 536 73">
   <!-- Icon: wings + arrow, scaled to match text height -->
-  <g fill="#000000" transform="translate(0,0) scale(0.35)">
+  <g fill="#000000" transform="translate(2.5,0) scale(0.34)">
     <!-- Left wing -->
     <polygon points="89.5,208 12.5,12 75,40.5 106,118.5 116,145.5"/>
     <!-- Right wing -->
