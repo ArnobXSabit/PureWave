@@ -7,10 +7,6 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
- <!-- Google Font for Logo -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;900&display=swap" rel="stylesheet">
-
-
 <link rel="icon" type="image/x-icon" href="favicon.png">
 
 <style>
@@ -38,22 +34,6 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 }
 
 .nav-left { display:flex; align-items:center; gap:16px; }
-.nav-left .brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
-.nav-left .brand-icon { height:20px; }
-.nav-left .logo {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-weight: 900;
-    font-size: 1.6rem;
-    color: #222;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-
-}
-@media (max-width: 768px) {
-    .nav-left .logo {
-        font-size: 1.3rem;
-    }
-}
 
 /* Nav links */
 .nav-links { display:flex; gap:30px; align-items:center; }
@@ -184,10 +164,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   <div class="nav-container">
     <div class="nav-left">
       <button id="sidebarToggle2" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
-      <a href="index.html" class="brand">
-        <img src="icon.png" alt="Brand Icon" class="brand-icon">
-        <span class="logo">PUREWAVE</span>
+      <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
+        <img src="home.svg" alt="PureWave Logo" class="brand-icon" style="height:30px;">
       </a>
+
     </div>
     <div class="nav-center">
       <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
@@ -212,10 +192,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   <div class="nav-container">
     <div class="nav-left">
       <button id="sidebarToggle" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
-      <a href="index.html" class="brand">
-        <img src="icon.png" alt="Brand Icon" class="brand-icon">
-        <span class="logo">PUREWAVE</span>
+      <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
+        <img src="home.svg" alt="PureWave Logo" class="brand-icon" style="height:30px;">
       </a>
+
     </div>
     <nav class="nav-links">
       <a href="index.html" title="Home"><i class="fas fa-home"></i></a>

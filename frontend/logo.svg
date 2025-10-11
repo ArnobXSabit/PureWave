@@ -1,0 +1,14 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="120" viewBox="0 0 400 120">
+  <!-- PURE: bold and tall -->
+  <text x="10" y="85" font-family="Montserrat, sans-serif" font-weight="800" font-size="64"
+        letter-spacing="-1.5" transform="scale(0.95,1.15)">
+    PURE
+  </text>
+  <!-- WAVE: thin and tall, placed very close -->
+  <text x="180" y="85" font-family="Montserrat, sans-serif" font-weight="300" font-size="64"
+        letter-spacing="-1.5" transform="scale(0.95,1.15)">
+    WAVE
+  </text>
+</svg>
