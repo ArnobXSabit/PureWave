@@ -15,28 +15,66 @@
 body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top:100px; }
 
 /* ---------- Navbar ---------- */
-.navbar, .duplicate-navbar {
-  width:100%; 
-  background:#fff; 
-  box-shadow:0 2px 5px rgba(114, 114, 114, 0.1); 
-  position:fixed; 
-  top:0; 
-  z-index:1000; 
-  
+.navbar{
+  height: 70px;
+  width: 98%;
+  left: 1%;
+  right: 1%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(114,114,114,0.1);
+  display: flex;
+  align-items: center;
+
+  /* Rounded bottom corners */
+  border-bottom-left-radius: 10px;   /* adjust size as needed */
+  border-bottom-right-radius: 10px;
 }
+
+.duplicate-navbar {
+  height: 100px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(114,114,114,0.1);
+  display: flex;
+  align-items: center;
+}
+
 .nav-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap:16px;
-  width:99%;
-  padding:10px;
+  align-items: center; /* vertical center */
+  margin: 0 auto;        /* cut space from left and right */
+  width: 98%;
+  padding: 0 16px;
+  height: 100%;
+  gap: 16px;
 }
 
-.nav-left { display:flex; align-items:center; gap:16px; }
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* or whatever space you want */
+}
+
+/* brand logo */
+.brand-icon {
+  height: 20px;   /* fixed height, fits well inside 70px navbar */
+  width: auto;
+  display: block;
+}
 
 /* Nav links */
-.nav-links { display:flex; gap:30px; align-items:center; }
+.nav-links {
+  display: flex;
+  align-items: center; /* vertical center */
+  gap: 20px; /* or whatever space you want */
+}
 .nav-links a { color:#222; font-size:1.0rem; transition: color 0.3s; position:relative; }
 .nav-links a:hover { color:#3a91f5; }
 
@@ -69,7 +107,11 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 #floatingCart span { position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff0000; color:#fff; font-size:0.75rem; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; }
 
 /* Center search bar */
-.nav-center { flex:1; display:flex; justify-content:center; align-items:center; position:relative; }
+.nav-center{ 
+  display: flex;
+  align-items: center;
+  gap: 12px; /* or whatever space you want */
+}
 .nav-center input[type="text"] {
   width:100%;
   max-width:300px;
@@ -160,13 +202,14 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 <body>
 
 <!-- Duplicate Navbar -->
-<header class="navbar duplicate-navbar" id="duplicateNavbar">
+<header class="duplicate-navbar" id="duplicateNavbar">
   <div class="nav-container">
     <div class="nav-left">
       <button id="sidebarToggle2" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
-      <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
-        <img src="home.svg" alt="PureWave Logo" class="brand-icon" style="height:30px;">
-      </a>
+        <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
+          <img src="home.svg" alt="PureWave Logo" class="brand-icon">
+        </a>
+
 
     </div>
     <div class="nav-center">
@@ -192,9 +235,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   <div class="nav-container">
     <div class="nav-left">
       <button id="sidebarToggle" style="background:none;border:none;font-size:1.8rem;cursor:pointer;">&#9776;</button>
-      <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
-        <img src="home.svg" alt="PureWave Logo" class="brand-icon" style="height:30px;">
-      </a>
+        <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
+          <img src="home.svg" alt="PureWave Logo" class="brand-icon">
+        </a>
+
 
     </div>
     <nav class="nav-links">
