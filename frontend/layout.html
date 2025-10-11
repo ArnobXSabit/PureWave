@@ -84,6 +84,80 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 .duplicate-navbar { z-index:1100; transition: transform 0.3s ease, opacity 0.3s ease; }
 .duplicate-navbar.hidden { transform: translateY(-100%); opacity: 0; }
 
+/* Adjust duplicate navbar height to 100px (top 30 + bottom 70) */
+.duplicate-navbar {
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1100;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.duplicate-navbar .nav-container {
+  height: 100%; 
+}
+
+/* promo bar full control here */
+
+.top-bar {
+  display: flex;
+  width: 100%;
+  height: 50px;
+  background-color: #e9ecef ; 
+}
+
+/* Each section */
+.top-bar-section {
+  flex: 1; /* equal width by default */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* default center */
+  transition: all 0.3s;
+}
+
+/* Individual control */
+
+/* Promo 1 */
+.promo1 {
+  flex: 0 0 25% ; 
+  background-color: #000000;
+  padding: 0 8px;
+}
+.promo1 .top-item { color: #ffffff; }
+
+/* Promo 2 */
+.promo2 {
+  flex: 0 0 25.5% ; 
+  padding: 0 12px;
+}
+.promo2 .top-item { color: #0077ff; }
+
+/* Promo 3 */
+.promo3 {
+  flex: 0 0 15% ; 
+  background-color: #000000;
+  padding: 0 6px;
+}
+.promo3 .top-item { color: #ffffff; }
+
+/* Promo 4 */
+.promo4 { 
+  flex: 0 0 0.5% ; 
+  padding: 0 10px; 
+}
+.promo4 .top-item { color: #ff9900; }
+
+/* Promo 5 */
+.promo5 { 
+  flex: 0 0 15% ; 
+  background-color: #000000;
+  padding: 0 12px; }
+.promo5 .top-item { color: #ffffff; }
+
+/* Optional hover effect */
+.top-item:hover { text-decoration: underline; }
+
+
 /* ---------- Cart ---------- */
 .nav-cart-count {position: absolute;top: -8px;right: -8px;background: #3a91f5;color: #fff;font-size: 0.75rem;font-weight: bold;width: 18px;height: 18px;border-radius: 50%;display: flex;justify-content: center;align-items: center;}
 #floatingCart {position: fixed;bottom: 30px;right: 30px;width:50px;height:50px;background:#3a91f5;color:#fff;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:1.5rem;z-index:1200;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
@@ -232,16 +306,24 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 
 <!-- Duplicate Navbar -->
 <header class="duplicate-navbar" id="duplicateNavbar">
+
+<!-- Top Promo Bar -->
+<div class="top-bar">
+  <div class="top-bar-section promo1"><a href="sale.html" class="top-item">Exclusive Polo T-Shirts on Sale | Limited Time Only ></a></div>
+  <div class="top-bar-section promo2"><a href="#" class="top-item"></a></div>
+  <div class="top-bar-section promo3"><a href="bulk.html" class="top-item"><i class="fas fa-car"></i> Order Bulk / Corporate Sale</a></div>
+  <div class="top-bar-section promo4"><a href="#" class="top-item"></a></div>
+  <div class="top-bar-section promo5"><a href="locations.html" class="top-item"><i class="fas fa-location-dot"></i> Store Location</a></div>
+  <div class="top-bar-section promo6"><a href="about.html" class="top-item">? About Us</a></div>
+  <div class="top-bar-section promo7"><a href="login.html" class="top-item">Login</a></div>
+</div>
+
+  <!-- Bottom Navbar (Existing Duplicate Navbar Content) -->
   <div class="nav-container">
     <div class="nav-left">
-      <button id="sidebarToggle2" class="hamburger" aria-label="Toggle Sidebar">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-        <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
-          <img src="home.svg" alt="PureWave Logo" class="brand-icon">
-        </a>
+      <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
+        <img src="home.svg" alt="PureWave Logo" class="brand-icon">
+      </a>
     </div>
     <div class="nav-center">
       <form id="searchForm" style="display:flex; width:100%; max-width:400px; position:relative;">
@@ -260,6 +342,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
     </nav>
   </div>
 </header>
+
 
 <!-- Original Navbar -->
 <header class="navbar" id="navbar">
@@ -400,11 +483,6 @@ const sidebar=document.getElementById('sidebar');
 sidebarToggle.addEventListener('click', () => {
   sidebar.classList.toggle('open');
   sidebarToggle.classList.toggle('active'); // animate hamburger
-});
-
-sidebarToggle2.addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-  sidebarToggle2.classList.toggle('active'); // animate hamburger
 });
 
 document.addEventListener('click', e=>{ if(!sidebar.contains(e.target)&&!sidebarToggle.contains(e.target)&&!sidebarToggle2.contains(e.target)) sidebar.classList.remove('open'); });
