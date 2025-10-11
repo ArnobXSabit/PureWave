@@ -66,12 +66,12 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 
 /* brand logo */
 .brand-icon {
-  height: 25px;   
+  height: 20px;   
   width: auto;
   display: block;
 }
 .brand-icon-duplicate-navbar {
-  height: 20px;   
+  height: 25px;   
   width: auto;
   display: block;
 }
@@ -99,8 +99,11 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 }
 
 .duplicate-navbar .nav-container {
-  height: 100%; 
+  width: 1600px;       /* fixed width */
+  max-width: 100%;      /* optional: never exceed 98% on smaller screens */
+  margin: 0 auto;      /* center it */
 }
+
 
 /* promo bar full control here */
 
@@ -185,7 +188,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px; padding-top
 
 .promo6 .top-item {
   font-weight: 500;      /* bold */
-  color:rgb(0, 0, 0) ; 
+  color:rgb(87, 87, 87) ; 
   text-decoration: none; /* no underline */
   font-size: 0.90rem;    /* smaller */
 }
@@ -370,7 +373,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   <div class="nav-container">
     <div class="nav-left">
       <a href="index.html" class="brand" style="display:flex;align-items:center;gap:8px;">
-        <img src="home.svg" alt="PureWave Logo" class="brand-icon">
+        <img src="home.svg" alt="PureWave Logo" class="brand-icon-duplicate-navbar">
       </a>
     </div>
     <div>

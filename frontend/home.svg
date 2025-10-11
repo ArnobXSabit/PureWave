@@ -12,12 +12,12 @@
   <!-- Text logo: PUREWAVE -->
   <g transform="translate(130,70)"> 
     <!-- PURE: bold -->
-    <text x="0" y="0" font-family="Montserrat, sans-serif" font-weight="800" font-size="80"
+    <text x="10" y="0" font-family="Montserrat, sans-serif" font-weight="800" font-size="80"
           letter-spacing="-1.5" transform="scale(0.95,1.15)">
       PURE
     </text>
     <!-- WAVE: thin -->
-    <text x="215" y="0" font-family="Montserrat, sans-serif" font-weight="300" font-size="80"
+    <text x="230" y="0" font-family="Montserrat, sans-serif" font-weight="300" font-size="80"
           letter-spacing="-1.5" transform="scale(0.95,1.15)">
       WAVE
     </text>
