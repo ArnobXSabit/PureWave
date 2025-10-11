@@ -604,6 +604,24 @@ function adjustSidebar() {
 window.addEventListener('load', adjustSidebar);
 window.addEventListener('resize', adjustSidebar);
 
+let wasDuplicateNavbarHidden = false; // track previous state
+
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  const isHidden = scrollY > hideThreshold;
+
+  duplicateNavbar.classList.toggle('hidden', isHidden);
+  mainContent.style.paddingTop = isHidden ? originalNavbarHeight + 'px' : duplicateNavbarHeight + 'px';
+
+  // Only close sidebar when duplicate navbar becomes visible
+  if (wasDuplicateNavbarHidden && !isHidden) {
+    sidebar.classList.remove('open');
+    sidebarToggle.classList.remove('active');
+  }
+
+  wasDuplicateNavbarHidden = isHidden;
+});
+
 // ---------- Cart count ----------
 function updateCartCount(){
   let cartItems = JSON.parse(localStorage.getItem('cart'))||[];
