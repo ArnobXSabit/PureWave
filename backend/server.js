@@ -8,6 +8,7 @@ const app = express();
 const port = 3000;
 
 // ------------------ Middleware ------------------
+
 app.use(cors({
   origin: "http://127.0.0.1:5500", // your frontend Live Server
   credentials: true
@@ -22,6 +23,7 @@ app.use("/Products", express.static(path.join(__dirname, "../frontend/Products")
 app.use("/Thumbnails", express.static(path.join(__dirname, "../frontend/Thumbnails")));
 
 // ------------------ Routes ------------------
+
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/products");
 const dbRoutes = require("./routes/db");
@@ -35,6 +37,7 @@ app.use("/api/categories", categoriesRoutes);
 app.use("/api/cart", cartRoutes); // <-- mounted cart routes
 
 // ------------------ Default Routes ------------------
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
@@ -48,6 +51,7 @@ app.get("/:page", (req, res) => {
 });
 
 // ------------------ Error Handling ------------------
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ success: false, message: "Internal server error" });

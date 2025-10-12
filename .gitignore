@@ -2,6 +2,7 @@
 node_modules/
 
 # Ignore environment variables
+server.env
 .env
 
 # Optional: other temporary or system files
