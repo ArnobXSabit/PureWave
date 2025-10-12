@@ -29,7 +29,7 @@ exports.getAllProducts = async (req, res) => {
       imagesRows.forEach(img => {
         if (!imagesMap[img.product_id]) imagesMap[img.product_id] = [];
         // Prepend /Products/ to the image filename
-        imagesMap[img.product_id].push(`https://purewave.onrender.com/${img.image_url}`);
+        imagesMap[img.product_id].push(`${img.image_url}`);
       });
     }
 
