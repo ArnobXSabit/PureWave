@@ -3,16 +3,16 @@ const router = express.Router();
 const authenticateToken = require("../middleware/auth");
 const cartController = require("../controllers/cartController");
 
-// GET Cart
-router.get("/", authenticateToken, cartController.getCart);
+// GET Cart (optional auth for guest)
+router.get("/", authenticateToken.optional, cartController.getCart);
 
-// ADD to Cart
-router.post("/", authenticateToken, cartController.addToCart);
+// ADD to Cart (optional auth)
+router.post("/", authenticateToken.optional, cartController.addToCart);
 
-// UPDATE Quantity
-router.put("/:cartId", authenticateToken, cartController.updateCart);
+// UPDATE Quantity (optional auth)
+router.put("/:cartId", authenticateToken.optional, cartController.updateCart);
 
-// DELETE Cart Item
-router.delete("/:cartId", authenticateToken, cartController.deleteCartItem);
+// DELETE Cart Item (optional auth)
+router.delete("/:cartId", authenticateToken.optional, cartController.deleteCartItem);
 
 module.exports = router;
