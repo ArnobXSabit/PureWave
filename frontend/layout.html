@@ -712,46 +712,79 @@ if(!guestId){
     localStorage.setItem('guest_id', guestId);
 }
 
-async function addToCart(productId, quantity){
+async function addToCart(productId, quantity) {
     const user = JSON.parse(localStorage.getItem('user')) || null;
     const payload = {
         product_id: productId,
         quantity: quantity
     };
+    if (user) payload.user_id = user.user_id;
+    else payload.guest_id = localStorage.getItem('guest_id');
 
-    if(user) payload.user_id = user.user_id;      // logged-in user
-    else payload.guest_id = localStorage.getItem('guest_id'); // guest
-
-    const res = await fetch(`${BACKEND_URL}/api/cart`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    updateCartCount(); // refresh cart count
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/cart`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        updateCartCount(); // refresh cart count
+    } catch(err) {
+        console.error("Add to cart failed:", err);
+    }
 }
 
-async function fetchCart(){
+async function fetchCart() {
     const user = JSON.parse(localStorage.getItem('user')) || null;
     let url = `${BACKEND_URL}/api/cart`;
-
-    if(user) url += `?user_id=${user.user_id}`;
+    if (user) url += `?user_id=${user.user_id}`;
     else url += `?guest_id=${localStorage.getItem('guest_id')}`;
 
     const res = await fetch(url);
-    const cartItems = await res.json();
-    return cartItems;
+    const data = await res.json();
+    return data.cart || data; // handle response format
 }
 
+// ------------update quantity / delete items ---------------
+async function updateCartItem(cartId, quantity) {
+    const user = JSON.parse(localStorage.getItem('user')) || null;
+    const payload = { quantity };
+    if (!user) payload.guest_id = localStorage.getItem('guest_id');
+
+    await fetch(`${BACKEND_URL}/api/cart/${cartId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    updateCartCount();
+}
+
+async function deleteCartItem(cartId) {
+    const user = JSON.parse(localStorage.getItem('user')) || null;
+    const payload = {};
+    if (!user) payload.guest_id = localStorage.getItem('guest_id');
+
+    await fetch(`${BACKEND_URL}/api/cart/${cartId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    updateCartCount();
+}
+
+
 // ---------- Cart count ----------
-async function updateCartCount(){
+async function updateCartCount() {
     const cartItems = await fetchCart();
-    const count = cartItems.reduce((sum, item)=> sum + item.quantity, 0);
+    const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     document.getElementById('cartCount').textContent = count;
     document.getElementById('navbarCartCount').textContent = count;
     document.getElementById('duplicateNavbarCartCount').textContent = count;
 }
-
+window.addEventListener('load', () => {
+    updateCartCount(); // show current cart count
+    loadSidebarCategories(); // optional: your categories logic
+});
 
 // ---------- Duplicate navbar scroll & content adjust ----------
 const duplicateNavbar = document.getElementById('duplicateNavbar');
