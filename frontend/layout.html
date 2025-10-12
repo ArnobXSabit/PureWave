@@ -119,7 +119,7 @@ body { background:#fff; color:#333; line-height:1.6; font-size:16px;}
 }
 
 .duplicate-navbar .nav-links a i {
-  font-size: 1.5rem; /* increase size (default is ~1rem) */
+  font-size: 1.2rem; /* increase size (default is ~1rem) */
   color: #3e3e3e;    /* optional: change color */
   transition: color 0.3s;
 }
@@ -448,10 +448,11 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
   <div class="top-bar-section promo4"><a href="#" class="top-item"></a></div>
   <div class="top-bar-section promo5"><a href="locations.html" class="top-item"><i class="fas fa-location-dot"></i> Store Location</a></div>
   <div class="top-bar-section promo6"><a href="about.html" class="top-item"><i class="fas fa-circle-question"></i> About Us</a></div>
-  <div class="top-bar-section promo7"><a href="login.html" class="top-item">
+  <div class="top-bar-section promo7">
+    <a href="login.html" class="top-item" id="loginLink">
       <i class="fas fa-right-to-bracket" style="margin-right:4px;"></i> Login
-      </a>
-    </div>
+    </a>
+  </div>
 </div>
 
   <!-- Bottom Navbar (Existing Duplicate Navbar Content) -->
@@ -811,7 +812,7 @@ function createFloatingIcons() {
   }
 }
 
-let ticking = false;
+let ticking = true;
 function updateIconsOnScroll() {
   if (!ticking) {
     window.requestAnimationFrame(() => {
@@ -849,6 +850,22 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   setupSearchForm(document.getElementById('navbarDropdownForm'), document.getElementById('navbarDropdownInput'));
   updateCartCount();
   createFloatingIcons();
+
+  // ---------- Login/Dashboard switch ----------
+const loginLink = document.getElementById('loginLink');
+
+// Example: check login status from localStorage (or your backend)
+const userData = localStorage.getItem('user'); // assuming you store user info in localStorage after login
+
+if (userData) {
+  // If logged in
+  loginLink.innerHTML = `<i class="fas fa-gauge" style="margin-right:4px;"></i> Dashboard`;
+  loginLink.href = "userProfile.html"; // or your actual dashboard page
+} else {
+  // If not logged in
+  loginLink.innerHTML = `<i class="fas fa-right-to-bracket" style="margin-right:4px;"></i> Login`;
+  loginLink.href = "login.html";
+}
 
 const searchIcon = document.getElementById('navbarSearchIcon');
 const searchDropdown = document.getElementById('navbarSearchDropdown');
