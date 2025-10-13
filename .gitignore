@@ -4,8 +4,7 @@ node_modules/
 # Ignore environment variables
 .env
 
-# Ignore database
-PureWaveDB.sql
+backend/images/
 
 # Optional: other temporary or system files
 npm-debug.log
