@@ -4,6 +4,7 @@ node_modules/
 # Ignore environment variables
 .env
 
+# Ignore all images in backend/images
 backend/images/
 
 # Optional: other temporary or system files
