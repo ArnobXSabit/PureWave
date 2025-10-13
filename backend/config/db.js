@@ -69,4 +69,4 @@ const aivenDB = mysql.createPool({
 
 // ----------------- Export all pools -----------------
 // module.exports = { localDB, railwayDB, aivenDB };
-module.exports = {aivenDB };
+module.exports = aivenDB ;
