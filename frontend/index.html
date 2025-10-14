@@ -229,7 +229,7 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 
 <!-----------------------FLOATING W BACKGROUND-------------->
 
-<style>
+<!-- <style>
   #floatingBackground {
   position: absolute;
   top: calc(100px +  /* navbar */ 
@@ -264,8 +264,8 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 #floatingBackground .icon2 { top: 200px; right: 15%; animation-duration: 18s; }
 #floatingBackground .icon3 { top: 400px; left: 30%; animation-duration: 20s; }
 /* Add more as needed */
+</style> -->
 
-</style>
 </head>
 <body>
 
@@ -407,8 +407,10 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 <section class="products">
   <div class="container" style="max-width:1200px;margin:auto;padding:40px 20px;">
     <h2>Featured Categories</h2>
+
     <!-- Floating Icons Background -->
-    <div id="floatingBackground"></div>
+    <!-- <div id="floatingBackground"></div> -->
+     
     <div id="categoriesGrid" class="category-grid"></div>
   </div>
 </section>
@@ -732,8 +734,7 @@ loadAllCategories();
 
 
 <!-----------------------FLOATING W BACKGROUND-------------->
-
-<script>
+<!-- <script>
 document.addEventListener("DOMContentLoaded", () => {
   const floatingBg = document.getElementById("floatingBackground");
   const iconCount = 200; // total number of icons
@@ -774,6 +775,6 @@ document.addEventListener("DOMContentLoaded", () => {
     floatingBg.appendChild(icon);
   }
 });
-</script>
+</script> -->
 </body>
 </html>
