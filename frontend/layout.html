@@ -410,32 +410,6 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
 
 @media (max-width: 500px) { #sidebar { width: 80vw; } }
 
-/* Floating background & icons */
-/* #floatingBackground {
-  position: fixed;
-  top: 100px;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 100px);
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 1;
-}
-.floating-icon {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  opacity: 0.1;
-  animation: float 12s ease-in-out infinite;
-}
-@keyframes float {
-  0%   { transform: translateY(0) translateX(0) rotate(0deg); }
-  25%  { transform: translateY(-20px) translateX(10px) rotate(10deg); }
-  50%  { transform: translateY(20px) translateX(-10px) rotate(-10deg); }
-  75%  { transform: translateY(-10px) translateX(5px) rotate(5deg); }
-  100% { transform: translateY(0) translateX(0) rotate(0deg); }
-} */
-
 /* Accessibility */
 #sidebarToggle{ aria-label: "Toggle Sidebar Menu"; }
 </style>
@@ -525,9 +499,6 @@ footer { background:#222; color:#fff; padding:40px 0; text-align:center; font-si
     </div>
   </div>
 </header>
-
-<!-- Floating Background -->
-<!-- <div id="floatingBackground"></div> -->
 
 <main>
   <h1>testing layout</h1>
@@ -851,75 +822,6 @@ function setupAutocomplete(input){
 
 // ---------- Search forms ----------
 function setupSearchForm(form,input){ form.addEventListener('submit', e=>{ e.preventDefault(); const q=input.value.trim(); if(q) window.location.href=`products.html?search=${encodeURIComponent(q)}`; }); }
-
-// ---------- Floating Icons ----------
-// const floatingBg = document.getElementById('floatingBackground');
-// let ICON_COUNT = window.innerWidth < 768 ? 50 : 200;
-// const ICON_SIZE = 60;
-// const icons = [];
-
-// function isOverlapping(x, y, existingIcons) {
-//   for (let icon of existingIcons) {
-//     const dx = x - icon.dataset.x;
-//     const dy = y - icon.dataset.y;
-//     const distance = Math.sqrt(dx*dx + dy*dy);
-//     if (distance < ICON_SIZE + 10) return true;
-//   }
-//   return false;
-// }
-
-// function createFloatingIcons() {
-//   floatingBg.innerHTML = '';
-//   icons.length = 0;
-//   const vw = window.innerWidth;
-//   const vh = window.innerHeight - 100;
-//   for (let i = 0; i < ICON_COUNT; i++) {
-//     const icon = document.createElement('img');
-//     icon.src = 'w-icon.svg';
-//     icon.className = 'floating-icon';
-//     let x, y, attempts = 0;
-//     do { 
-//       x = Math.random() * (vw - ICON_SIZE); 
-//       y = Math.random() * (vh - ICON_SIZE); 
-//       attempts++; 
-//       if (attempts > 100) break; 
-//     } while (isOverlapping(x, y, icons));
-//     icon.dataset.x = x; 
-//     icon.dataset.y = y;
-//     icon.style.left = x + 'px'; 
-//     icon.style.top = y + 'px';
-//     floatingBg.appendChild(icon); 
-//     icons.push(icon);
-//   }
-// }
-
-// let ticking = true;
-// function updateIconsOnScroll() {
-//   if (!ticking) {
-//     window.requestAnimationFrame(() => {
-//       const scrollY = window.scrollY;
-//       const vh = window.innerHeight - 100;
-//       icons.forEach(icon => {
-//         let y = parseFloat(icon.dataset.y) - scrollY * 0.2;
-//         if (y < -ICON_SIZE) {
-//           y = vh + Math.random() * 100;
-//           icon.dataset.x = Math.random() * (window.innerWidth - ICON_SIZE);
-//           icon.dataset.y = y;
-//           icon.style.left = icon.dataset.x + 'px';
-//         }
-//         icon.style.transform = `translateY(${y}px)`;
-//       });
-//       ticking = false;
-//     });
-//     ticking = true;
-//   }
-// }
-
-// function handleResize() {
-//   ICON_COUNT = window.innerWidth < 768 ? 50 : 200;
-//   createFloatingIcons();
-//   updateIconsOnScroll();
-// }
 
 // ---------- Initialize ----------
 document.addEventListener('DOMContentLoaded', async ()=>{
